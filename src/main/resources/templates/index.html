@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sitemesh="http://www.opensymphony.com/sitemesh/decorator"
+      sitemesh:decorate="~{decorators/main}">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang chủ - OneShop</title>
+</head>
+<body>
+<div class="container mt-5" style="max-width: 420px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-body text-center">
+            <h4 class="card-title mb-4 text-primary">
+                <i class="bi bi-bag-check-fill"></i> Chào mừng đến với OneShop!
+            </h4>
+
+            <p class="text-muted">
+                Nền tảng mua sắm thông minh – nhanh chóng, tiện lợi và an toàn.<br>
+                Hãy đăng nhập hoặc tạo tài khoản để bắt đầu trải nghiệm.
+            </p>
+
+            <div class="d-grid gap-3 mt-4">
+                <a href="/login" class="btn btn-primary w-100">🔑 Đăng nhập</a>
+                <a href="/register" class="btn btn-success w-100">📝 Đăng ký ngay</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

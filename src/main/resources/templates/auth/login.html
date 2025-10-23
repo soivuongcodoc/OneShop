@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập - OneShop</title>
+</head>
+<body>
+<div class="container mt-5" style="max-width: 420px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4">
+                <i class="bi bi-lock-fill text-primary"></i> Đăng nhập OneShop
+            </h4>
+
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Tên đăng nhập hoặc Email</label>
+                    <input type="text" id="username" name="username" class="form-control"
+                           placeholder="Nhập tên đăng nhập hoặc email" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mật khẩu</label>
+                    <input type="password" id="password" name="password"
+                           class="form-control" placeholder="Nhập mật khẩu" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+
+                <div class="text-center mt-3">
+                    <p>Chưa có tài khoản?
+                        <a th:href="@{/register}" class="text-decoration-none">Đăng ký ngay</a></p>
+                    <p><a th:href="@{/forgot-password}" class="text-decoration-none">Quên mật khẩu?</a></p>
+                </div>
+
+                <div id="message" class="mt-3 text-center fw-bold"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const body = {
+        usernameOrEmail: document.getElementById("username").value.trim(),
+        password: document.getElementById("password").value
+    };
+
+    const msgEl = document.getElementById("message");
+    msgEl.textContent = "⏳ Đang đăng nhập...";
+
+    try {
+        const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text || "Sai tên đăng nhập hoặc mật khẩu!");
+        }
+
+        const data = await res.json();
+
+        // ✅ Lưu JWT vào localStorage
+        localStorage.setItem("jwtToken", data.accessToken || data.token);
+        localStorage.setItem("username", data.username);
+
+        msgEl.classList.remove("text-danger");
+        msgEl.classList.add("text-success");
+        msgEl.textContent = "✅ Đăng nhập thành công! Đang chuyển hướng...";
+
+        // ✅ Chuyển hướng sang trang chủ
+        setTimeout(() => window.location.href = "/home", 1500);
+
+    } catch (err) {
+        msgEl.classList.remove("text-success");
+        msgEl.classList.add("text-danger");
+        msgEl.textContent = "❌ " + err.message;
+    }
+});
+</script>
+</body>
+</html>

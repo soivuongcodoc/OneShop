@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Đăng ký - OneShop</title>
+</head>
+<body>
+<div class="container mt-5" style="max-width: 500px;">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4">📝 Đăng ký tài khoản OneShop</h4>
+
+            <form id="registerForm">
+                <div class="mb-3">
+                    <label for="fullname" class="form-label">Họ và tên</label>
+                    <input type="text" class="form-control" id="fullname" name="fullname"
+                           placeholder="Nhập họ tên đầy đủ" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email"
+                           placeholder="Nhập email" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Tên đăng nhập</label>
+                    <input type="text" class="form-control" id="username" name="username"
+                           placeholder="Tên đăng nhập" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mật khẩu</label>
+                    <input type="password" class="form-control" id="password" name="password"
+                           placeholder="Mật khẩu" required>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">Đăng ký</button>
+
+                <div class="text-center mt-3">
+                    <p>Đã có tài khoản? <a th:href="@{/login}">Đăng nhập ngay</a></p>
+                </div>
+
+                <div id="message" class="mt-3 text-center fw-bold"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const body = {
+        username: document.getElementById("username").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value,
+        // trường fullname nếu mày muốn lưu thêm có thể gửi kèm
+        fullName: document.getElementById("fullname").value.trim()
+    };
+
+    const msgEl = document.getElementById("message");
+    msgEl.textContent = "⏳ Đang xử lý...";
+
+    try {
+        const res = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(text || "Đăng ký thất bại!");
+        }
+
+        msgEl.classList.remove("text-danger");
+        msgEl.classList.add("text-success");
+        msgEl.textContent = "✅ Đăng ký thành công! Kiểm tra email để lấy mã OTP xác thực.";
+
+        // Lưu email tạm để verify
+        localStorage.setItem("verifyEmail", body.email);
+
+        // Sau 2s tự chuyển sang trang xác thực OTP
+        setTimeout(() => window.location.href = "/verify", 2000);
+
+    } catch (err) {
+        msgEl.classList.remove("text-success");
+        msgEl.classList.add("text-danger");
+        msgEl.textContent = "❌ " + (err.message || "Đăng ký thất bại, vui lòng thử lại.");
+    }
+});
+</script>
+</body>
+</html>
