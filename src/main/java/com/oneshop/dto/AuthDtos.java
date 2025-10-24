@@ -12,6 +12,7 @@ public class AuthDtos {
     private String email;
     @NotBlank @Size(min=6, max=100)
     private String password;
+    private String fullName;
   }
 
   @Getter @Setter
@@ -51,5 +52,6 @@ public class AuthDtos {
     private String token;
     private String tokenType = "Bearer";
     private String username;
+    private String role;
   }
 }

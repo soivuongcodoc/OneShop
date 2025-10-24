@@ -72,9 +72,16 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         msgEl.classList.remove("text-danger");
         msgEl.classList.add("text-success");
         msgEl.textContent = "✅ Đăng nhập thành công! Đang chuyển hướng...";
-
-        // ✅ Chuyển hướng sang trang chủ
-        setTimeout(() => window.location.href = "/home", 1500);
+		// chuyển hướng sang trang chủ
+        setTimeout(() => {
+            if (data.role === "ROLE_ADMIN") {
+                window.location.href = "/admin/dashboard";
+            } else if (data.role === "ROLE_VENDOR") {
+                window.location.href = "/vendor/home";
+            } else {
+                window.location.href = "/home";
+            }
+        }, 1500);
 
     } catch (err) {
         msgEl.classList.remove("text-success");

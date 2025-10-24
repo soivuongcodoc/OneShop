@@ -38,6 +38,7 @@ public class AuthService {
         .password(encoder.encode(req.getPassword()))
         .enabled(false)
         .roles(Set.of(userRole))
+        .fullName(req.getFullName())
         .build();
     userRepo.save(user);
 
@@ -73,16 +74,28 @@ public class AuthService {
   }
 
   public JwtResponse login(LoginRequest req) {
-    // Cho phép login bằng username hoặc email
-	  User u = userRepo.findByUsername(req.getUsernameOrEmail())
-			    .or(() -> userRepo.findByEmail(req.getUsernameOrEmail()))
-			    .orElseThrow(() -> new RuntimeException("Account not found"));
-    if (u == null || !u.isEnabled()) throw new RuntimeException("Account not found or not verified");
-    if (!encoder.matches(req.getPassword(), u.getPassword())) throw new RuntimeException("Wrong credentials");
+	// Cho phép login bằng username hoặc email
+	    User u = userRepo.findByUsername(req.getUsernameOrEmail())
+	            .or(() -> userRepo.findByEmail(req.getUsernameOrEmail()))
+	            .orElseThrow(() -> new RuntimeException("Account not found"));
 
-    String subject = u.getUsername(); // subject của JWT
-    String token = jwt.generateToken(subject);
-    return new JwtResponse(token, "Bearer", u.getUsername());
+	    if (u == null || !u.isEnabled())
+	        throw new RuntimeException("Account not found or not verified");
+
+	    if (!encoder.matches(req.getPassword(), u.getPassword()))
+	        throw new RuntimeException("Wrong credentials");
+
+	    String subject = u.getUsername(); // subject của JWT
+	    String token = jwt.generateToken(subject);
+
+	    // ✅ Lấy role đầu tiên của user (nếu có nhiều role thì lấy role chính)
+	    String roleName = u.getRoles().stream()
+	            .findFirst()
+	            .map(role -> role.getName())
+	            .orElse("ROLE_USER");
+
+	    // ✅ Trả về thêm role cho frontend
+	    return new JwtResponse(token, "Bearer", u.getUsername(), roleName);
   }
 
   public void forgotPassword(ForgotPasswordRequest req) {

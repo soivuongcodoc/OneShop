@@ -36,8 +36,10 @@ public class SecurityConfig {
           .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // stateless
           .authorizeHttpRequests(auth -> auth
               .requestMatchers(
-            		  "/",
-            		  "/home",
+            	  "/",
+            	  "/home",
+            	  "/admin/**",
+            	  "/vendor/**",
                   "/decorators/**",
                   "/css/**",
                   "/js/**",

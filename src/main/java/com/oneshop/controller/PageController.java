@@ -11,13 +11,19 @@ public class PageController {
     public String testPage() {
         return "test";
     }
-
+    @GetMapping("/admin/dashboard")
+    public String dashboard() {
+        return "admin/dashboard"; // Tạo file dashboard.html
+    }
     // Trang đăng nhập
     @GetMapping("/login")
     public String loginPage() {
         return "auth/login"; // file: templates/auth/login.html
     }
-
+    @GetMapping("/vendor/home")
+    public String home() {
+        return "vendor/home"; // Tạo file home.html
+    }
     // Trang đăng ký
     @GetMapping("/register")
     public String registerPage() {

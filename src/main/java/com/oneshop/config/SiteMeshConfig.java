@@ -21,7 +21,8 @@ public class SiteMeshConfig {
           .addDecoratorPath("/register", "/decorators/main")
           .addDecoratorPath("/test", "/decorators/main")
           .addDecoratorPath("/", "/decorators/main")
-
+          .addDecoratorPath("/dashboard", "/decorators/main")
+          .addDecoratorPath("/vendor/home", "/decorators/main")
           // tránh chính layout bị decor lần nữa
           .addExcludedPath("/decorators/*")
           // bỏ qua tài nguyên tĩnh
