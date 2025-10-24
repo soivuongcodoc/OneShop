@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý đơn hàng - OneShop Vendor</title>
+</head>
+<body>
+    <h2 class="fw-bold mb-3">Quản lý đơn hàng</h2>
+
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item"><a class="nav-link active" href="#">Tất cả</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Đơn mới</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Đã xác nhận</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Đang giao</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Đã giao</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Đã hủy</a></li>
+    </ul>
+
+    <table class="table table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã đơn</th>
+                <th>Khách hàng</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>Thanh toán</th>
+                <th>Trạng thái</th>
+                <th class="text-center">Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="order : ${orders}">
+                <td><strong th:text="'#' + ${order.id}">#1001</strong></td>
+                <td th:text="'Khách hàng #' + ${order.customerId}">Khách hàng #123</td>
+                <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:30</td>
+                <td th:text="${#numbers.formatDecimal(order.totalAmount,0,'COMMA',0,'POINT')} + ' ₫'">500000 ₫</td>
+                <td th:text="${order.paymentMethod}">COD</td>
+                <td>
+                    <span th:classappend="${order.status == 'PENDING'} ? 'badge bg-warning text-dark' : 
+                                           (${order.status == 'CONFIRMED'} ? 'badge bg-info' : 
+                                           (${order.status == 'SHIPPING'} ? 'badge bg-primary' : 
+                                           (${order.status == 'DELIVERED'} ? 'badge bg-success' : 'badge bg-danger')))"
+                          th:text="${order.status}">Đang xử lý</span>
+                </td>
+                <td class="text-center">
+                    <a th:href="@{'/vendor/orders/' + ${order.id}}" class="btn btn-sm btn-info">
+                        <i class="bi bi-eye"></i> Xem
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

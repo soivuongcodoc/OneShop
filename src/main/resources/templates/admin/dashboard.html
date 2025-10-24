@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - OneShop</title>
+</head>
+<body>
+    <h2 class="fw-bold mb-3">Admin Dashboard</h2>
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Người dùng</h5>
+                    <p class="display-6" th:text="${userCount}">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Sản phẩm</h5>
+                    <p class="display-6" th:text="${productCount}">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Đơn hàng</h5>
+                    <p class="display-6" th:text="${orderCount}">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Doanh thu</h5>
+                    <p class="display-6" th:text="${revenue}">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -51,5 +51,6 @@ public class AuthDtos {
     private String token;
     private String tokenType = "Bearer";
     private String username;
+    private java.util.List<String> roles;
   }
 }

@@ -82,7 +82,8 @@ public class AuthService {
 
     String subject = u.getUsername(); // subject của JWT
     String token = jwt.generateToken(subject);
-    return new JwtResponse(token, "Bearer", u.getUsername());
+    var roleNames = u.getRoles().stream().map(Role::getName).toList();
+    return new JwtResponse(token, "Bearer", u.getUsername(), roleNames);
   }
 
   public void forgotPassword(ForgotPasswordRequest req) {

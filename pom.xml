@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.6</version>
+		<version>3.5.7</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.oneshop</groupId>
@@ -118,7 +118,7 @@
 			<artifactId>sitemesh-jakarta</artifactId>
 			<version>3.1.0</version>
 			<scope>system</scope>
-			<systemPath>C:\Users\Admin\Documents\workspace-spring-tools-for-eclipse-4.31.0.RELEASE\Oneshop\lib\sitemesh-3.0.1-jakarta.jar</systemPath>
+			<systemPath>${project.basedir}/lib/sitemesh-3.0.1-jakarta.jar</systemPath>
 		</dependency>
 
 	</dependencies>

@@ -63,18 +63,25 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
             throw new Error(text || "Sai tên đăng nhập hoặc mật khẩu!");
         }
 
-        const data = await res.json();
+    const data = await res.json();
 
         // ✅ Lưu JWT vào localStorage
         localStorage.setItem("jwtToken", data.accessToken || data.token);
         localStorage.setItem("username", data.username);
+        if (data.roles) {
+            localStorage.setItem("roles", JSON.stringify(data.roles));
+        }
 
         msgEl.classList.remove("text-danger");
         msgEl.classList.add("text-success");
         msgEl.textContent = "✅ Đăng nhập thành công! Đang chuyển hướng...";
 
-        // ✅ Chuyển hướng sang trang chủ
-        setTimeout(() => window.location.href = "/home", 1500);
+    // ✅ Chuyển hướng theo role
+    const roles = (data.roles || []).map(r => r.toUpperCase());
+    let target = "/home";
+    if (roles.includes("ROLE_ADMIN")) target = "/admin/dashboard";
+    else if (roles.includes("ROLE_VENDOR")) target = "/vendor/dashboard";
+    setTimeout(() => window.location.href = target, 1200);
 
     } catch (err) {
         msgEl.classList.remove("text-success");

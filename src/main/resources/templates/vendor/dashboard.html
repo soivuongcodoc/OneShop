@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - OneShop Vendor</title>
+</head>
+<body>
+    <h2 class="fw-bold mb-4">Bảng điều khiển</h2>
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card text-bg-primary text-center">
+                <div class="card-body">
+                    <h5>Sản phẩm</h5>
+                    <p class="fs-2 fw-bold" th:text="${productCount}">125</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-bg-success text-center">
+                <div class="card-body">
+                    <h5>Đơn hàng hôm nay</h5>
+                    <p class="fs-2 fw-bold" th:text="${todayOrders}">8</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-bg-warning text-center">
+                <div class="card-body">
+                    <h5>Đang giao</h5>
+                    <p class="fs-2 fw-bold" th:text="${shippingOrders}">14</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-bg-info text-center">
+                <div class="card-body">
+                    <h5>Doanh thu hôm nay</h5>
+                    <p class="fs-2 fw-bold" th:text="${todayRevenue}">5.200.000 ₫</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Biểu đồ doanh thu tuần</h5>
+            <canvas id="revenueChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('revenueChart');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['T2','T3','T4','T5','T6','T7','CN'],
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: [1200000,1500000,1000000,2200000,3000000,500000,400000],
+                    borderWidth: 3,
+                    borderColor: '#007bff',
+                    fill: false,
+                    tension: 0.3
+                }]
+            }
+        });
+    </script>
+</body>
+</html>

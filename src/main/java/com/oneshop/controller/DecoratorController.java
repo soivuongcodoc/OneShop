@@ -12,4 +12,10 @@ public class DecoratorController {
         // Trả về view Thymeleaf: /templates/decorators/main.html
         return "decorators/main";
     }
+    
+    @GetMapping("/decorators/vendor-layout")
+    public String vendorLayoutDecorator() {
+        // Trả về view Thymeleaf: /templates/decorators/vendor-layout.html
+        return "decorators/vendor-layout";
+    }
 }

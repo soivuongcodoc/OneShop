@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thống kê doanh thu - OneShop Vendor</title>
+</head>
+<body>
+    <h2 class="fw-bold mb-4">Thống kê doanh thu</h2>
+
+    <form class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label class="form-label">Từ ngày</label>
+            <input type="date" class="form-control" name="fromDate" th:value="${fromDate}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Đến ngày</label>
+            <input type="date" class="form-control" name="toDate" th:value="${toDate}">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Lọc</button>
+        </div>
+    </form>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Tổng doanh thu: 
+                <span class="text-success fw-bold" th:text="${#numbers.formatDecimal(totalRevenue,0,'COMMA',0,'POINT')} + ' ₫'">12.500.000 ₫</span>
+            </h5>
+            <canvas id="revenueChart" height="120"></canvas>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Ngày</th>
+                    <th>Số đơn</th>
+                    <th>Doanh thu (₫)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="r : ${dailyRevenue}">
+                    <td th:text="${r.date}">20/10/2025</td>
+                    <td th:text="${r.orders}">5</td>
+                    <td th:text="${#numbers.formatDecimal(r.amount,0,'COMMA',0,'POINT')} + ' ₫'">3.200.000 ₫</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'bar',
+            data: {
+                labels: ['T2','T3','T4','T5','T6','T7','CN'],
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: [1200000,1400000,1800000,1500000,2200000,900000,1100000],
+                    backgroundColor: '#198754'
+                }]
+            }
+        });
+    </script>
+</body>
+</html>
