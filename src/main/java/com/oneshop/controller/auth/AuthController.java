@@ -1,7 +1,7 @@
-package com.oneshop.controller;
+package com.oneshop.controller.auth;
 
-import com.oneshop.dto.AuthDtos.*;
-import com.oneshop.service.AuthService;
+import com.oneshop.dto.auth.AuthDtos.*;
+import com.oneshop.service.auth.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

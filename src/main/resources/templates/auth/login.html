@@ -65,8 +65,11 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
     const data = await res.json();
 
-        // ✅ Lưu JWT vào localStorage
-        localStorage.setItem("jwtToken", data.accessToken || data.token);
+    // ✅ Lưu JWT vào localStorage + Cookie để server đọc cho trang SSR
+    const token = data.accessToken || data.token;
+    localStorage.setItem("jwtToken", token);
+    // Cookie sống 1 ngày (86400s)
+    document.cookie = `JWT=${token}; Max-Age=86400; Path=/`;
         localStorage.setItem("username", data.username);
         if (data.roles) {
             localStorage.setItem("roles", JSON.stringify(data.roles));
@@ -84,7 +87,9 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     setTimeout(() => window.location.href = target, 1200);
 
     } catch (err) {
-        msgEl.classList.remove("text-success");
+    // Xóa cookie nếu fail để tránh trạng thái lửng
+    document.cookie = "JWT=; Max-Age=0; Path=/";
+    msgEl.classList.remove("text-success");
         msgEl.classList.add("text-danger");
         msgEl.textContent = "❌ " + err.message;
     }

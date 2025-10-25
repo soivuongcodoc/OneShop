@@ -17,5 +17,7 @@ function getCurrentUser() {
 function logout() {
   localStorage.removeItem("jwtToken");
   localStorage.removeItem("username");
+  // Xóa cookie JWT để kết thúc phiên trên server cho các request SSR
+  document.cookie = "JWT=; Max-Age=0; Path=/";
   window.location.href = "/login";
 }

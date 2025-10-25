@@ -1,4 +1,4 @@
-package com.oneshop.dto;
+package com.oneshop.dto.auth;
 
 import jakarta.validation.constraints.*;
 import lombok.*;

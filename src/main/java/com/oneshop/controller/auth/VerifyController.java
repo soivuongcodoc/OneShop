@@ -1,7 +1,7 @@
-package com.oneshop.controller;
+package com.oneshop.controller.auth;
 
-import com.oneshop.dto.AuthDtos.VerifyEmailRequest;
-import com.oneshop.service.AuthService;
+import com.oneshop.dto.auth.AuthDtos.VerifyEmailRequest;
+import com.oneshop.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,12 +12,6 @@ import org.springframework.web.bind.annotation.*;
 public class VerifyController {
 
     private final AuthService authService;
-
-//    // Trang hiển thị form nhập OTP
-//    @GetMapping("/verify")
-//    public String showVerifyPage() {
-//        return "auth/verify"; // file verify.html trong templates
-//    }
 
     // Xử lý khi người dùng nhập OTP và nhấn xác minh
     @PostMapping("/verify")

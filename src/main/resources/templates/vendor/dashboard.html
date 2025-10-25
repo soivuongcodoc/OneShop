@@ -2,69 +2,89 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - OneShop Vendor</title>
+    <title>Bảng điều khiển - OneShop Vendor</title>
 </head>
 <body>
     <h2 class="fw-bold mb-4">Bảng điều khiển</h2>
+    
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-bg-primary text-center shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-box-seam fs-1"></i>
+                    <h5 class="mt-2">Tổng sản phẩm</h5>
+                    <p class="fs-2 fw-bold mb-0" th:text="${productCount}">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-bg-success text-center shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-cart-check fs-1"></i>
+                    <h5 class="mt-2">Đơn hàng hôm nay</h5>
+                    <p class="fs-2 fw-bold mb-0" th:text="${todayOrdersCount}">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-bg-warning text-white text-center shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-clock-history fs-1"></i>
+                    <h5 class="mt-2">Chờ xác nhận</h5>
+                    <p class="fs-2 fw-bold mb-0" th:text="${pendingOrdersCount}">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-bg-info text-white text-center shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-cash-stack fs-1"></i>
+                    <h5 class="mt-2">Doanh thu hôm nay</h5>
+                    <p class="fs-5 fw-bold mb-0" th:text="${#numbers.formatDecimal(todayRevenue?:0,0,'COMMA',0,'POINT')} + ' ₫'">0 ₫</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row g-3">
-        <div class="col-md-3">
-            <div class="card text-bg-primary text-center">
-                <div class="card-body">
-                    <h5>Sản phẩm</h5>
-                    <p class="fs-2 fw-bold" th:text="${productCount}">125</p>
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-speedometer2"></i> Tổng quan</h5>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-bg-success text-center">
                 <div class="card-body">
-                    <h5>Đơn hàng hôm nay</h5>
-                    <p class="fs-2 fw-bold" th:text="${todayOrders}">8</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-bg-warning text-center">
-                <div class="card-body">
-                    <h5>Đang giao</h5>
-                    <p class="fs-2 fw-bold" th:text="${shippingOrders}">14</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-bg-info text-center">
-                <div class="card-body">
-                    <h5>Doanh thu hôm nay</h5>
-                    <p class="fs-2 fw-bold" th:text="${todayRevenue}">5.200.000 ₫</p>
+                    <p class="mb-2"><i class="bi bi-info-circle text-primary"></i> Chào mừng bạn đến với Bảng điều khiển OneShop Vendor!</p>
+                    <p class="mb-2"><i class="bi bi-graph-up text-success"></i> Theo dõi sản phẩm, đơn hàng và doanh thu của bạn tại đây.</p>
+                    <hr>
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <a th:href="@{/vendor/products}" class="text-decoration-none">
+                                <div class="p-3 border rounded">
+                                    <i class="bi bi-box-seam fs-1 text-primary"></i>
+                                    <p class="mt-2 mb-0 fw-bold">Quản lý sản phẩm</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a th:href="@{/vendor/orders}" class="text-decoration-none">
+                                <div class="p-3 border rounded">
+                                    <i class="bi bi-cart-check fs-1 text-success"></i>
+                                    <p class="mt-2 mb-0 fw-bold">Quản lý đơn hàng</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a th:href="@{/vendor/revenue}" class="text-decoration-none">
+                                <div class="p-3 border rounded">
+                                    <i class="bi bi-bar-chart-line fs-1 text-info"></i>
+                                    <p class="mt-2 mb-0 fw-bold">Xem doanh thu</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="mt-4 card shadow-sm">
-        <div class="card-body">
-            <h5 class="card-title">Biểu đồ doanh thu tuần</h5>
-            <canvas id="revenueChart"></canvas>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const ctx = document.getElementById('revenueChart');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['T2','T3','T4','T5','T6','T7','CN'],
-                datasets: [{
-                    label: 'Doanh thu (VNĐ)',
-                    data: [1200000,1500000,1000000,2200000,3000000,500000,400000],
-                    borderWidth: 3,
-                    borderColor: '#007bff',
-                    fill: false,
-                    tension: 0.3
-                }]
-            }
-        });
-    </script>
 </body>
 </html>

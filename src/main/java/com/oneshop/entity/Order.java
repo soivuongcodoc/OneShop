@@ -16,22 +16,25 @@ public class Order {
     @Column(name = "shop_id", nullable = false)
     private Long shopId;
 
-    @Column(name = "customer_id", nullable = false)
-    private Long customerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 
     @Builder.Default
     @Column(name = "order_date")
     private LocalDateTime orderDate = LocalDateTime.now();
 
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private String status = "new";
+    private OrderStatus status = OrderStatus.PENDING;
 
     @Column(name = "total_amount", nullable = false, precision = 18, scale = 2)
     private BigDecimal totalAmount;
 
-    @Column(name = "payment_method", nullable = false, length = 50)
-    private String paymentMethod;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id", nullable = false)
+    private PaymentMethod paymentMethod;
 
     @Column(name = "shipping_address", nullable = false, length = 500)
     private String shippingAddress;

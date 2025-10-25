@@ -35,7 +35,9 @@ public class SecurityConfig {
           .httpBasic(basic -> basic.disable()) // Không dùng HTTP Basic
           .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // stateless
           .authorizeHttpRequests(auth -> auth
-              .anyRequest().permitAll() // Tạm thời cho phép tất cả để test
+              .requestMatchers("/vendor/**").hasRole("VENDOR")
+              .requestMatchers("/admin/**").hasRole("ADMIN")
+              .anyRequest().permitAll()
           )
           .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

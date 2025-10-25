@@ -1,6 +1,6 @@
-package com.oneshop.service;
+package com.oneshop.service.auth;
 
-import com.oneshop.dto.AuthDtos.*;
+import com.oneshop.dto.auth.AuthDtos.*;
 import com.oneshop.entity.OtpCode;
 import com.oneshop.entity.Role;
 import com.oneshop.entity.User;
@@ -8,6 +8,7 @@ import com.oneshop.repository.OtpCodeRepository;
 import com.oneshop.repository.RoleRepository;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.security.JwtTokenProvider;
+import com.oneshop.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -75,8 +76,8 @@ public class AuthService {
   public JwtResponse login(LoginRequest req) {
     // Cho phép login bằng username hoặc email
 	  User u = userRepo.findByUsername(req.getUsernameOrEmail())
-			    .or(() -> userRepo.findByEmail(req.getUsernameOrEmail()))
-			    .orElseThrow(() -> new RuntimeException("Account not found"));
+		    .or(() -> userRepo.findByEmail(req.getUsernameOrEmail()))
+		    .orElseThrow(() -> new RuntimeException("Account not found"));
     if (u == null || !u.isEnabled()) throw new RuntimeException("Account not found or not verified");
     if (!encoder.matches(req.getPassword(), u.getPassword())) throw new RuntimeException("Wrong credentials");
 

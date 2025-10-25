@@ -30,8 +30,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // Nếu đã có auth thì bỏ qua (tránh set lại)
     if (SecurityContextHolder.getContext().getAuthentication() == null) {
       String header = req.getHeader(HttpHeaders.AUTHORIZATION);
+      String token = null;
       if (header != null && header.startsWith("Bearer ")) {
-        String token = header.substring(7);
+        token = header.substring(7);
+      } else if (req.getCookies() != null) {
+        // Fallback: đọc JWT từ cookie tên "JWT"
+        for (var c : req.getCookies()) {
+          if ("JWT".equals(c.getName()) && c.getValue() != null && !c.getValue().isBlank()) {
+            token = c.getValue();
+            break;
+          }
+        }
+      }
+
+      if (token != null) {
         try {
           String subject = jwt.getSubject(token); // username hoặc email
           User u = userRepo.findByUsername(subject)

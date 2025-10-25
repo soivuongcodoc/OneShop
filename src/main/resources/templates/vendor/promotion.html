@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Khuyến mãi - OneShop Vendor</title>
+</head>
+<body>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="fw-bold">Chương trình khuyến mãi</h2>
+    <a th:href="@{/vendor/promotions/new}" class="btn btn-success"><i class="bi bi-plus-circle"></i> Tạo khuyến mãi</a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Tên</th>
+          <th>Loại</th>
+          <th>Giá trị</th>
+          <th>Thời gian</th>
+          <th>Trạng thái</th>
+          <th class="text-end">Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="p : ${promotions}">
+          <td th:text="${p.name}">Sale 10%</td>
+          <td th:text="${p.discountType}">PERCENTAGE</td>
+          <td th:text="${p.discountValue}">10</td>
+          <td>
+            <span th:text="${#temporals.format(p.startTime, 'dd/MM/yyyy HH:mm')}">01/10/2025</span>
+            -
+            <span th:text="${#temporals.format(p.endTime, 'dd/MM/yyyy HH:mm')}">31/10/2025</span>
+          </td>
+          <td>
+            <span th:classappend="${p.active} ? 'badge bg-success' : 'badge bg-secondary'"
+                  th:text="${p.active} ? 'Đang hoạt động' : 'Tắt'"></span>
+          </td>
+          <td class="text-end">
+            <a th:href="@{'/vendor/promotions/' + ${p.id} + '/edit'}" class="btn btn-sm btn-primary">Sửa</a>
+            <form th:action="@{'/vendor/promotions/' + ${p.id} + '/delete'}" method="post" class="d-inline" onsubmit="return confirm('Xoá khuyến mãi?')">
+              <button class="btn btn-sm btn-outline-danger">Xoá</button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
