@@ -1,9 +1,14 @@
 package com.oneshop.controller;
 
 import com.oneshop.dto.AuthDtos.*;
+import com.oneshop.security.JwtTokenProvider;
 import com.oneshop.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
   private final AuthService authService;
+  private final JwtTokenProvider jwt;
 
   @PostMapping("/register")
   public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest req) {
@@ -19,7 +25,7 @@ public class AuthController {
     return ResponseEntity.ok("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
   }
 
-  @PostMapping("/verify-email")
+  @PostMapping("/verify")
   public ResponseEntity<?> verify(@Valid @RequestBody VerifyEmailRequest req) {
     authService.verifyEmail(req);
     return ResponseEntity.ok("Xác thực email thành công!");
@@ -45,5 +51,23 @@ public class AuthController {
   public ResponseEntity<String> testAuth() {
       return ResponseEntity.ok("JWT xác thực hợp lệ, chào mừng bạn!");
   }
+  @GetMapping("/verify-token")
+  public ResponseEntity<?> verifyToken(@RequestHeader("Authorization") String authHeader) {
+      if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing token");
+      }
 
+      String token = authHeader.substring(7);
+      if (!jwt.validateToken(token)) {
+          return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid token");
+      }
+
+      var roles = jwt.getRoles(token);
+      var username = jwt.getSubject(token);
+
+      return ResponseEntity.ok(Map.of(
+          "username", username,
+          "roles", roles
+      ));
+  }
 }

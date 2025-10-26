@@ -10,5 +10,12 @@
     <p>Quản lý sản phẩm và đơn hàng tại đây.</p>
     <a href="/logout" class="btn btn-danger mt-3">Đăng xuất</a>
 </div>
+<script>
+const token = localStorage.getItem("jwtToken");
+if (!token) {
+    window.location.href = "/login";
+}
+</script>
+
 </body>
 </html>

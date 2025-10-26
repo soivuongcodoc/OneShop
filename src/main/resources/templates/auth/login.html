@@ -39,56 +39,7 @@
     </div>
 </div>
 
-<script>
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
+<script src="/js/login.js"></script>
 
-    const body = {
-        usernameOrEmail: document.getElementById("username").value.trim(),
-        password: document.getElementById("password").value
-    };
-
-    const msgEl = document.getElementById("message");
-    msgEl.textContent = "⏳ Đang đăng nhập...";
-
-    try {
-        const res = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body)
-        });
-
-        if (!res.ok) {
-            const text = await res.text();
-            throw new Error(text || "Sai tên đăng nhập hoặc mật khẩu!");
-        }
-
-        const data = await res.json();
-
-        // ✅ Lưu JWT vào localStorage
-        localStorage.setItem("jwtToken", data.accessToken || data.token);
-        localStorage.setItem("username", data.username);
-
-        msgEl.classList.remove("text-danger");
-        msgEl.classList.add("text-success");
-        msgEl.textContent = "✅ Đăng nhập thành công! Đang chuyển hướng...";
-		// chuyển hướng sang trang chủ
-        setTimeout(() => {
-            if (data.role === "ROLE_ADMIN") {
-                window.location.href = "/admin/dashboard";
-            } else if (data.role === "ROLE_VENDOR") {
-                window.location.href = "/vendor/home";
-            } else {
-                window.location.href = "/home";
-            }
-        }, 1500);
-
-    } catch (err) {
-        msgEl.classList.remove("text-success");
-        msgEl.classList.add("text-danger");
-        msgEl.textContent = "❌ " + err.message;
-    }
-});
-</script>
 </body>
 </html>

@@ -85,8 +85,7 @@ public class AuthService {
 	    if (!encoder.matches(req.getPassword(), u.getPassword()))
 	        throw new RuntimeException("Wrong credentials");
 
-	    String subject = u.getUsername(); // subject của JWT
-	    String token = jwt.generateToken(subject);
+	    String token = jwt.generateToken(u);
 
 	    // ✅ Lấy role đầu tiên của user (nếu có nhiều role thì lấy role chính)
 	    String roleName = u.getRoles().stream()
