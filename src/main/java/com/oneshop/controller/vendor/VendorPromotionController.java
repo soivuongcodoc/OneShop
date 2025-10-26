@@ -97,7 +97,7 @@ public class VendorPromotionController {
         p.setDiscountValue(form.getDiscountValue());
         p.setStartTime(form.getStartTime());
         p.setEndTime(form.getEndTime());
-        p.setActive(form.getActive() != null && form.getActive());
+        p.setActive(Boolean.TRUE.equals(form.getActive()));
         promoRepo.save(p);
         return "redirect:/vendor/promotions";
     }

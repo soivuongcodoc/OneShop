@@ -81,8 +81,8 @@ public class AuthService {
     if (u == null || !u.isEnabled()) throw new RuntimeException("Account not found or not verified");
     if (!encoder.matches(req.getPassword(), u.getPassword())) throw new RuntimeException("Wrong credentials");
 
-    String subject = u.getUsername(); // subject của JWT
-    String token = jwt.generateToken(subject);
+    // Generate JWT including roles claim for stateless authorization
+    String token = jwt.generateToken(u);
     var roleNames = u.getRoles().stream().map(Role::getName).toList();
     return new JwtResponse(token, "Bearer", u.getUsername(), roleNames);
   }

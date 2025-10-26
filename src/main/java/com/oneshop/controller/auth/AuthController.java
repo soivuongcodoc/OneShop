@@ -6,6 +6,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.HttpHeaders;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,7 +29,20 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest req) {
-    return ResponseEntity.ok(authService.login(req));
+    JwtResponse jwt = authService.login(req);
+
+    // Set HttpOnly cookie so SSR pages can read JWT securely
+    ResponseCookie cookie = ResponseCookie.from("JWT", jwt.getToken())
+        .httpOnly(true)
+        .secure(false) // set true when using HTTPS
+        .path("/")
+        .maxAge(24 * 60 * 60) // 1 day
+        .sameSite("Lax")
+        .build();
+
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .body(jwt);
   }
 
   @PostMapping("/forgot-password")
@@ -41,9 +56,21 @@ public class AuthController {
     authService.resetPassword(req);
     return ResponseEntity.ok("Đặt lại mật khẩu thành công!");
   }
-  @GetMapping("/test")
-  public ResponseEntity<String> testAuth() {
-      return ResponseEntity.ok("JWT xác thực hợp lệ, chào mừng bạn!");
+
+  @PostMapping("/logout")
+  public ResponseEntity<?> logout() {
+    // Clear JWT cookie
+    ResponseCookie clear = ResponseCookie.from("JWT", "")
+        .httpOnly(true)
+        .secure(false)
+        .path("/")
+        .maxAge(0)
+        .sameSite("Lax")
+        .build();
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, clear.toString())
+        .body("Đăng xuất thành công");
   }
+  // Endpoint test đã bỏ
 
 }

@@ -79,11 +79,11 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         msgEl.classList.add("text-success");
         msgEl.textContent = "✅ Đăng nhập thành công! Đang chuyển hướng...";
 
-    // ✅ Chuyển hướng theo role
-    const roles = (data.roles || []).map(r => r.toUpperCase());
-    let target = "/home";
-    if (roles.includes("ROLE_ADMIN")) target = "/admin/dashboard";
-    else if (roles.includes("ROLE_VENDOR")) target = "/vendor/dashboard";
+    // ✅ Chuyển hướng theo role (hỗ trợ cả định dạng có/không có tiền tố ROLE_)
+    const roles = (data.roles || []).map(r => (r || "").toString().toUpperCase());
+    const hasAdmin = roles.includes("ROLE_ADMIN") || roles.includes("ADMIN");
+    const hasVendor = roles.includes("ROLE_VENDOR") || roles.includes("VENDOR");
+    let target = hasAdmin ? "/admin/dashboard" : (hasVendor ? "/vendor/dashboard" : "/home");
     setTimeout(() => window.location.href = target, 1200);
 
     } catch (err) {

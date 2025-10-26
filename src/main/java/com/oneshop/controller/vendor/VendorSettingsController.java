@@ -28,6 +28,19 @@ public class VendorSettingsController {
     private final UserRepository userRepo;
     private final AuthFacade auth;
 
+    @GetMapping("/vendor/profile")
+    public String profile(Model model) {
+        Long shopId = auth.requireUserId();
+        var shop = shopRepo.findById(shopId).orElse(null);
+        var user = userRepo.findById(shopId).orElse(null);
+        
+        model.addAttribute("pageTitle", "Thông tin cửa hàng - OneShop Vendor");
+        model.addAttribute("activePage", "profile");
+        model.addAttribute("shop", shop);
+        model.addAttribute("user", user);
+        return "vendor/profile";
+    }
+
     @GetMapping("/vendor/settings")
     public String settings(Model model) {
         Long shopId = auth.requireUserId();

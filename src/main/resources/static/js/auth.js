@@ -14,10 +14,16 @@ function getCurrentUser() {
   return localStorage.getItem("username");
 }
 
-function logout() {
+async function logout() {
+  try {
+    // Gọi server để xóa HttpOnly cookie JWT
+    await fetch("/api/auth/logout", { method: "POST" });
+  } catch (e) {
+    // ignore network error and proceed client-side cleanup
+  }
   localStorage.removeItem("jwtToken");
   localStorage.removeItem("username");
-  // Xóa cookie JWT để kết thúc phiên trên server cho các request SSR
+  // Xóa cookie do client set (nếu còn)
   document.cookie = "JWT=; Max-Age=0; Path=/";
   window.location.href = "/login";
 }

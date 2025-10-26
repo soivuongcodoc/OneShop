@@ -35,7 +35,7 @@ public class SecurityConfig {
           .httpBasic(basic -> basic.disable()) // Không dùng HTTP Basic
           .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // stateless
           .authorizeHttpRequests(auth -> auth
-              .requestMatchers("/vendor/**").hasRole("VENDOR")
+              .requestMatchers("/vendor/**").hasAnyRole("VENDOR", "ADMIN")
               .requestMatchers("/admin/**").hasRole("ADMIN")
               .anyRequest().permitAll()
           )

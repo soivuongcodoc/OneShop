@@ -6,11 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PageController {
 
-    // Trang test
-    @GetMapping("/test")
-    public String testPage() {
-        return "test";
-    }
+    // Trang test đã bỏ
 
     // Trang đăng nhập
     @GetMapping("/login")
