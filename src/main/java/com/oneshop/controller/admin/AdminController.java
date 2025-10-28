@@ -4,6 +4,8 @@ import com.oneshop.repository.OrderRepository;
 import com.oneshop.repository.ProductRepository;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.service.admin.UserService;
+import com.oneshop.entity.User;
+import com.oneshop.dto.admin.UserForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,6 +48,48 @@ public class AdminController {
     @GetMapping("/users/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+        return "redirect:/admin/users";
+    }
+
+    @GetMapping("/users/new")
+    public String newUser(Model model) {
+        model.addAttribute("form", new UserForm());
+        model.addAttribute("roles", userService.getAllRoles());
+        model.addAttribute("pageTitle", "Thêm người dùng - Admin");
+        model.addAttribute("mode", "create");
+        model.addAttribute("userId", null);
+        return "admin/users/user-form";
+    }
+
+    @PostMapping("/users")
+    public String createUser(@ModelAttribute("form") UserForm form) {
+        userService.createUser(form);
+        return "redirect:/admin/users";
+    }
+
+    @GetMapping("/users/{id}/edit")
+    public String editUser(@PathVariable Long id, Model model) {
+        User user = userService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        UserForm form = new UserForm();
+        form.setId(user.getId());
+        form.setUsername(user.getUsername());
+        form.setEmail(user.getEmail());
+        // map roles (assuming User.getRoles() returns collection of Role with getName())
+        if (user.getRoles() != null) {
+            form.setRoles(user.getRoles().stream().map(r -> r.getName()).toList());
+        }
+        model.addAttribute("form", form);
+        model.addAttribute("roles", userService.getAllRoles());
+        model.addAttribute("pageTitle", "Sửa người dùng - Admin");
+        model.addAttribute("mode", "edit");
+        model.addAttribute("userId", id);
+        return "admin/users/user-form";
+    }
+
+    @PostMapping("/users/{id}")
+    public String updateUser(@PathVariable Long id, @ModelAttribute("form") UserForm form) {
+        userService.updateUser(id, form);
         return "redirect:/admin/users";
     }
 }
