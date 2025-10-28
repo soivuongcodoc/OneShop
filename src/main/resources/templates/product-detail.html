@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title th:text="${product != null} ? ${product.name} : 'Sản phẩm'">
+      Sản phẩm
+    </title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <main th:if="${product} != null">
+      <div class="product-detail">
+        <div class="media">
+          <img
+            th:if="${product.imageUrl} != null"
+            th:src="${product.imageUrl}"
+            alt=""
+            style="max-width: 300px; max-height: 300px; object-fit: cover"
+          />
+        </div>
+        <div class="meta">
+          <h1 th:text="${product.name}">Tên sản phẩm</h1>
+          <div
+            class="price"
+            th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+          ></div>
+          <p th:text="${product.description}"></p>
+
+          <form th:action="@{'/user/cart/add/' + ${product.id}}" method="post">
+            <label>Số lượng</label>
+            <input type="number" name="qty" value="1" min="1" />
+            <button type="submit">Thêm vào giỏ</button>
+          </form>
+        </div>
+      </div>
+
+      <section class="reviews">
+        <h2>Đánh giá sản phẩm</h2>
+        <form
+          th:action="@{'/user/reviews/add'}"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <input type="hidden" name="productId" th:value="${product.id}" />
+          <label>Điểm (1-5)</label>
+          <input type="number" name="rating" min="1" max="5" value="5" />
+          <label>Bình luận (tối thiểu 50 ký tự)</label>
+          <textarea
+            name="comment"
+            rows="4"
+            placeholder="Chia sẻ trải nghiệm mua hàng..."
+            required
+          ></textarea>
+          <label>Ảnh/Video (tùy chọn)</label>
+          <input type="file" name="media" accept="image/*,video/*" />
+          <button type="submit">Gửi đánh giá</button>
+        </form>
+      </section>
+    </main>
+
+    <div th:if="${product} == null">
+      <p>Không tìm thấy sản phẩm.</p>
+      <a th:href="@{/products}">Quay lại danh sách</a>
+    </div>
+  </body>
+</html>

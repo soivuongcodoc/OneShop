@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Trang chủ - OneShop</title>
+</head>
+<body>
+<div class="container mt-5" style="max-width: 700px;">
+  <div class="card shadow-sm border-0">
+    <div class="card-body text-center">
+
+      <h3 class="text-primary mb-3">🏪 OneShop - Xin chào!</h3>
+
+      <p class="lead">
+        Xin chào <strong id="usernameDisplay">...</strong> 👋  
+      </p>
+
+      <div class="mt-4">
+        <button class="btn btn-danger me-2" onclick="logout()">Đăng xuất</button>
+        <button class="btn btn-success" onclick="testProtected()">Gọi API được bảo vệ</button>
+      </div>
+
+      <hr class="my-4">
+      <div id="apiResult" class="text-muted"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ⚙️ Lấy username và token
+const username = localStorage.getItem("username");
+const token = localStorage.getItem("jwtToken");
+
+// Nếu chưa đăng nhập thì về lại login
+if (!token) {
+  window.location.href = "/login";
+}
+
+// Hiển thị username
+document.getElementById("usernameDisplay").textContent = username || "Người dùng";
+
+// ✅ Hàm logout
+function logout() {
+  localStorage.removeItem("jwtToken");
+  localStorage.removeItem("username");
+  window.location.href = "/login";
+}
+
+// ✅ Gọi API được bảo vệ để test JWT
+async function testProtected() {
+  const res = await fetch("/api/auth/test", {
+    method: "GET",
+    headers: {
+      "Authorization": "Bearer " + localStorage.getItem("jwtToken")
+    }
+  });
+
+  const text = await res.text();
+  const el = document.getElementById("apiResult");
+  if (res.ok) {
+    el.classList.remove("text-danger");
+    el.classList.add("text-success");
+    el.textContent = "✅ Server phản hồi: " + text;
+  } else {
+    el.classList.remove("text-success");
+    el.classList.add("text-danger");
+    el.textContent = "❌ Token không hợp lệ hoặc hết hạn!";
+  }
+}
+</script>
+
+
+</body>
+</html>
