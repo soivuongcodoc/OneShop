@@ -118,7 +118,7 @@
 			<artifactId>sitemesh-jakarta</artifactId>
 			<version>3.1.0</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/sitemesh-3.0.1-jakarta.jar</systemPath>
+			<systemPath>D:\OneShop\lib\sitemesh-3.0.1-jakarta.jar</systemPath>
 		</dependency>
 
 	</dependencies>

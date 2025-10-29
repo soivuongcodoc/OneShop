@@ -1,19 +1,36 @@
 package com.oneshop.controller.auth;
 
-import com.oneshop.dto.auth.AuthDtos.*;
+import java.util.Map;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.oneshop.dto.auth.AuthDtos.ForgotPasswordRequest;
+import com.oneshop.dto.auth.AuthDtos.JwtResponse;
+import com.oneshop.dto.auth.AuthDtos.LoginRequest;
+import com.oneshop.dto.auth.AuthDtos.RegisterRequest;
+import com.oneshop.dto.auth.AuthDtos.ResetPasswordRequest;
+import com.oneshop.dto.auth.AuthDtos.VerifyEmailRequest;
+import com.oneshop.security.JwtTokenProvider;
 import com.oneshop.service.auth.AuthService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.HttpHeaders;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
   private final AuthService authService;
+  private final JwtTokenProvider jwt;
 
   @PostMapping("/register")
   public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest req) {
@@ -29,20 +46,21 @@ public class AuthController {
 
   @PostMapping("/login")
   public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest req) {
-    JwtResponse jwt = authService.login(req);
+    return ResponseEntity.ok(authService.login(req));
+    // JwtResponse jwt = authService.login(req);
 
-    // Set HttpOnly cookie so SSR pages can read JWT securely
-    ResponseCookie cookie = ResponseCookie.from("JWT", jwt.getToken())
-        .httpOnly(true)
-        .secure(false) // set true when using HTTPS
-        .path("/")
-        .maxAge(24 * 60 * 60) // 1 day
-        .sameSite("Lax")
-        .build();
+    // // Set HttpOnly cookie so SSR pages can read JWT securely
+    // ResponseCookie cookie = ResponseCookie.from("JWT", jwt.getToken())
+    //     .httpOnly(true)
+    //     .secure(false) // set true when using HTTPS
+    //     .path("/")
+    //     .maxAge(24 * 60 * 60) // 1 day
+    //     .sameSite("Lax")
+    //     .build();
 
-    return ResponseEntity.ok()
-        .header(HttpHeaders.SET_COOKIE, cookie.toString())
-        .body(jwt);
+    // return ResponseEntity.ok()
+    //     .header(HttpHeaders.SET_COOKIE, cookie.toString())
+    //     .body(jwt);
   }
 
   @PostMapping("/forgot-password")
@@ -70,6 +88,25 @@ public class AuthController {
     return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE, clear.toString())
         .body("Đăng xuất thành công");
+  }
+   @GetMapping("/verify-token")
+  public ResponseEntity<?> verifyToken(@RequestHeader("Authorization") String authHeader) {
+      if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing token");
+      }
+
+      String token = authHeader.substring(7);
+      if (!jwt.validateToken(token)) {
+          return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid token");
+      }
+
+      var roles = jwt.getRoles(token);
+      var username = jwt.getSubject(token);
+
+      return ResponseEntity.ok(Map.of(
+          "username", username,
+          "roles", roles
+      ));
   }
   // Endpoint test đã bỏ
 

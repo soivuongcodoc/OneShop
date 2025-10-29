@@ -1,72 +1,76 @@
 package com.oneshop.security;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.oneshop.entity.Role;
 import com.oneshop.entity.User;
 
-import java.security.Key;
-import java.util.Date;
-import java.util.List;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtTokenProvider {
-  private final Key key;
-  private final long validityMs;
+    private final Key key;
+    private final long validityMs;
 
-  public JwtTokenProvider(
-      @Value("${app.jwt.secret}") String secret,
-      @Value("${app.jwt.expiration}") long validityMs) {
-    this.key = Keys.hmacShaKeyFor(secret.getBytes());
-    this.validityMs = validityMs;
-  }
+    public JwtTokenProvider(
+            @Value("${app.jwt.secret}") String secret,
+            @Value("${app.jwt.expiration}") long validityMs) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.validityMs = validityMs;
+    }
 
-  // Legacy: subject-only token (kept for compatibility in case some clients rely on it)
-  public String generateToken(String subject) {
-    Date now = new Date();
-    Date expiry = new Date(now.getTime() + validityMs);
-    return Jwts.builder()
-        .setSubject(subject)
-        .setIssuedAt(now)
-        .setExpiration(expiry)
-        .signWith(key, SignatureAlgorithm.HS256)
-        .compact();
-  }
+    
+    public String generateToken(User user) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + validityMs);
 
-  // New: generate token including roles claim
-  public String generateToken(User user) {
-    Date now = new Date();
-    Date expiry = new Date(now.getTime() + validityMs);
-    List<String> roles = user.getRoles().stream().map(Role::getName).toList();
-    return Jwts.builder()
-        .setSubject(user.getUsername())
-        .claim("roles", roles)
-        .setIssuedAt(now)
-        .setExpiration(expiry)
-        .signWith(key, SignatureAlgorithm.HS256)
-        .compact();
-  }
+        List<String> roles = user.getRoles().stream()
+                .map(Role::getName)
+                .toList();
 
-  public String getSubject(String token) {
-    return Jwts.parserBuilder().setSigningKey(key).build()
-        .parseClaimsJws(token).getBody().getSubject();
-  }
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .claim("roles", roles)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
 
-  @SuppressWarnings("unchecked")
-  public List<String> getRoles(String token) {
-    return (List<String>) Jwts.parserBuilder().setSigningKey(key).build()
-        .parseClaimsJws(token).getBody().get("roles", List.class);
-  }
+    // ✅ Lấy username (subject)
+    public String getSubject(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
 
-  public boolean validateToken(String token) {
-      try {
-          Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-          return true;
-      } catch (JwtException | IllegalArgumentException e) {
-          return false;
-      }
-  }
+    // ✅ Lấy roles từ token
+    public List<String> getRoles(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody().get("roles", List.class);
+    }
+
+    // ✅ Kiểm tra token hợp lệ
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
 }

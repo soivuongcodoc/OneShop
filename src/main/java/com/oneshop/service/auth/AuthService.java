@@ -1,6 +1,11 @@
 package com.oneshop.service.auth;
 
-import com.oneshop.dto.auth.AuthDtos.*;
+import com.oneshop.dto.auth.AuthDtos.ForgotPasswordRequest;
+import com.oneshop.dto.auth.AuthDtos.JwtResponse;
+import com.oneshop.dto.auth.AuthDtos.LoginRequest;
+import com.oneshop.dto.auth.AuthDtos.RegisterRequest;
+import com.oneshop.dto.auth.AuthDtos.ResetPasswordRequest;
+import com.oneshop.dto.auth.AuthDtos.VerifyEmailRequest;
 import com.oneshop.entity.OtpCode;
 import com.oneshop.entity.Role;
 import com.oneshop.entity.User;
@@ -8,14 +13,17 @@ import com.oneshop.repository.OtpCodeRepository;
 import com.oneshop.repository.RoleRepository;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.security.JwtTokenProvider;
-import com.oneshop.service.MailService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.Set;
+
+import com.oneshop.service.MailService;
 
 @Service @RequiredArgsConstructor
 public class AuthService {
@@ -39,6 +47,7 @@ public class AuthService {
         .password(encoder.encode(req.getPassword()))
         .enabled(false)
         .roles(Set.of(userRole))
+        .fullName(req.getFullName())
         .build();
     userRepo.save(user);
 
@@ -74,17 +83,27 @@ public class AuthService {
   }
 
   public JwtResponse login(LoginRequest req) {
-    // Cho phép login bằng username hoặc email
-	  User u = userRepo.findByUsername(req.getUsernameOrEmail())
-		    .or(() -> userRepo.findByEmail(req.getUsernameOrEmail()))
-		    .orElseThrow(() -> new RuntimeException("Account not found"));
-    if (u == null || !u.isEnabled()) throw new RuntimeException("Account not found or not verified");
-    if (!encoder.matches(req.getPassword(), u.getPassword())) throw new RuntimeException("Wrong credentials");
+	// Cho phép login bằng username hoặc email
+	    User u = userRepo.findByUsername(req.getUsernameOrEmail())
+	            .or(() -> userRepo.findByEmail(req.getUsernameOrEmail()))
+	            .orElseThrow(() -> new RuntimeException("Account not found"));
 
-    // Generate JWT including roles claim for stateless authorization
-    String token = jwt.generateToken(u);
-    var roleNames = u.getRoles().stream().map(Role::getName).toList();
-    return new JwtResponse(token, "Bearer", u.getUsername(), roleNames);
+	    if (u == null || !u.isEnabled())
+	        throw new RuntimeException("Account not found or not verified");
+
+	    if (!encoder.matches(req.getPassword(), u.getPassword()))
+	        throw new RuntimeException("Wrong credentials");
+
+	    String token = jwt.generateToken(u);
+
+	    // ✅ Lấy role đầu tiên của user (nếu có nhiều role thì lấy role chính)
+	    String roleName = u.getRoles().stream()
+	            .findFirst()
+	            .map(role -> role.getName())
+	            .orElse("ROLE_USER");
+
+	    // ✅ Trả về thêm role cho frontend
+	    return new JwtResponse(token, "Bearer", u.getUsername(), roleName);
   }
 
   public void forgotPassword(ForgotPasswordRequest req) {
