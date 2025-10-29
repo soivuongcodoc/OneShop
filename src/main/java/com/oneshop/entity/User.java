@@ -1,7 +1,27 @@
 package com.oneshop.entity;
+<<<<<<< HEAD
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.Set;
+=======
+import java.util.Set;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+>>>>>>> admin
 @Entity @Table(name = "users")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class User {
@@ -18,7 +38,11 @@ public class User {
   private String password; // BCrypt
 //  private boolean emailVerified = false;
   private boolean enabled; // true sau khi verify email
+<<<<<<< HEAD
   @Column(name = "full_name", length = 150)
+=======
+ @Column(name = "full_name", length = 150)
+>>>>>>> admin
   private String fullName;
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "user_roles",

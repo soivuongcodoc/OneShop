@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Cài đặt cửa hàng</title>
+</head>
+<body>
+  <h2 class="fw-bold mb-3">Cài đặt cửa hàng</h2>
+  <form th:action="@{/vendor/settings}" method="post" enctype="multipart/form-data">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Tên cửa hàng</label>
+        <input type="text" name="name" class="form-control" th:value="${form.name}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Số điện thoại</label>
+        <input type="text" name="phone" class="form-control" th:value="${form.phone}">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Địa chỉ</label>
+        <input type="text" name="address" class="form-control" th:value="${form.address}">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Mô tả</label>
+        <textarea name="description" class="form-control" rows="4" th:text="${form.description}"></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Logo</label>
+        <input type="file" name="logo" class="form-control">
+        <div class="mt-2" th:if="${form.currentLogo}">
+          <img th:src="${form.currentLogo}" alt="Logo" style="max-height:80px">
+        </div>
+      </div>
+    </div>
+    <div class="mt-3">
+      <button class="btn btn-primary" type="submit">Lưu thay đổi</button>
+    </div>
+  </form>
+</body>
+</html>

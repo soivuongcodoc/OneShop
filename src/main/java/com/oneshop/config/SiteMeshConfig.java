@@ -1,10 +1,18 @@
 package com.oneshop.config;
 
+<<<<<<< HEAD
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.sitemesh.builder.SiteMeshFilterBuilder;
 import org.sitemesh.config.ConfigurableSiteMeshFilter;
+=======
+import org.sitemesh.builder.SiteMeshFilterBuilder;
+import org.sitemesh.config.ConfigurableSiteMeshFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+>>>>>>> admin
 
 @Configuration
 public class SiteMeshConfig {
@@ -17,6 +25,7 @@ public class SiteMeshConfig {
       @Override
       protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
         builder
+<<<<<<< HEAD
           .addDecoratorPath("/login", "/decorators/main")
           .addDecoratorPath("/register", "/decorators/main")
           .addDecoratorPath("/test", "/decorators/main")
@@ -25,6 +34,22 @@ public class SiteMeshConfig {
           .addDecoratorPath("/vendor/home", "/decorators/main")
           // tránh chính layout bị decor lần nữa
           .addExcludedPath("/decorators/*")
+=======
+          // Vendor pages dùng vendor layout
+          .addDecoratorPath("/vendor/*", "/decorators/vendor-layout")
+          // Admin pages dùng admin layout riêng
+          .addDecoratorPath("/admin/*", "/decorators/admin-layout")
+          
+          // Các trang công khai dùng main layout
+          .addDecoratorPath("/login", "/decorators/main")
+          .addDecoratorPath("/register", "/decorators/main")
+          // .addDecoratorPath("/test", "/decorators/main") // removed test page
+          .addDecoratorPath("/", "/decorators/main")
+
+          // tránh chính layout bị decor lần nữa
+          .addExcludedPath("/decorators/*")
+          .addExcludedPath("/layout/*")
+>>>>>>> admin
           // bỏ qua tài nguyên tĩnh
           .addExcludedPath("/css/*")
           .addExcludedPath("/js/*")
