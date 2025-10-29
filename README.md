@@ -69,7 +69,7 @@ OneShop là một nền tảng thương mại điện tử được xây dựng 
 - ✅ **Trang Top 20 sản phẩm**:
   - Top 20 sản phẩm bán chạy nhất
   - Phân trang hoặc lazy loading
-- ⚠️ **Các trang đặc biệt** (chưa hoàn thiện):
+- ⚠️ **Các trang đặc biệt** (chưa hoàn thiện hết):
   - 🔶 Sản phẩm mới nhất
   - 🔶 Sản phẩm được đánh giá cao nhất
   - 🔶 Sản phẩm yêu thích nhiều nhất
@@ -143,7 +143,6 @@ OneShop là một nền tảng thương mại điện tử được xây dựng 
   - Viết nhận xét
   - Upload hình ảnh (media)
 - ✅ **Xem đánh giá của người dùng khác**
-- ✅ **Hiển thị đánh giá trên trang chi tiết sản phẩm**
 
 ---
 
@@ -192,9 +191,6 @@ OneShop là một nền tảng thương mại điện tử được xây dựng 
 
 ### 🔶 Cần bổ sung
 
-- [ ] **Trang sản phẩm mới nhất**: Lọc theo ngày tạo, phân trang
-- [ ] **Trang sản phẩm đánh giá cao**: Lọc theo rating, phân trang
-- [ ] **Trang sản phẩm yêu thích nhiều**: Thống kê số lượng like, phân trang
 - [ ] **MOMO Payment Integration**: Tích hợp cổng thanh toán MOMO
 - [ ] **Xử lý trả hàng - hoàn tiền**: Logic đầy đủ cho trạng thái RETURNED
 - [ ] **Thông báo realtime**: Notification cho đơn hàng, thanh toán
@@ -317,18 +313,6 @@ mvn spring-boot:run
 - Quản lý profile, địa chỉ
 - Đánh giá, yêu thích sản phẩm
 - Xem lịch sử mua hàng
-
-### Vendor (Người bán - nếu có)
-
-- Quản lý sản phẩm của shop
-- Quản lý đơn hàng
-- Quản lý khuyến mãi
-
-### Admin (Quản trị viên)
-
-- Quản lý toàn bộ hệ thống
-- Quản lý user, category
-- Thống kê, báo cáo
 
 ---
 
