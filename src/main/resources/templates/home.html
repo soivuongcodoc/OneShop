@@ -1,74 +1,299 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title>Trang chủ - OneShop</title>
-</head>
-<body>
-<div class="container mt-5" style="max-width: 700px;">
-  <div class="card shadow-sm border-0">
-    <div class="card-body text-center">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trang chủ - OneShop</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
 
-      <h3 class="text-primary mb-3">🏪 OneShop - Xin chào!</h3>
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 50px 0;
+        text-align: center;
+        margin-bottom: 40px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
 
-      <p class="lead">
-        Xin chào <strong id="usernameDisplay">...</strong> 👋  
-      </p>
+      .header h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        letter-spacing: -1px;
+      }
 
-      <div class="mt-4">
-        <button class="btn btn-danger me-2" onclick="logout()">Đăng xuất</button>
-        <button class="btn btn-success" onclick="testProtected()">Gọi API được bảo vệ</button>
-      </div>
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        margin: 0;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
 
-      <hr class="my-4">
-      <div id="apiResult" class="text-muted"></div>
+      .products-section {
+        padding: 0 0 50px 0;
+      }
+
+      .section-title {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .product-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        margin-bottom: 24px;
+        display: flex;
+        flex-direction: row;
+        border: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+      }
+
+      .product-card:hover {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .product-image-wrapper {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        flex-shrink: 0;
+        width: 250px;
+        height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid #f0f0f0;
+      }
+
+      .product-image {
+        width: 250px;
+        height: 250px;
+        object-fit: contain;
+        display: block;
+      }
+
+      .product-info {
+        padding: 30px 35px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 18px;
+      }
+
+      .product-name {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        line-height: 1.5;
+        letter-spacing: -0.5px;
+      }
+
+      .product-detail-item {
+        font-size: 17px;
+        color: #555;
+        display: flex;
+        align-items: baseline;
+        padding: 8px 0;
+        border-bottom: 1px dashed #e8e8e8;
+      }
+
+      .product-detail-item:last-child {
+        border-bottom: none;
+      }
+
+      .product-detail-item .label {
+        font-weight: 600;
+        color: #7f8c8d;
+        min-width: 110px;
+        font-size: 15px;
+        letter-spacing: 0.3px;
+      }
+
+      .product-detail-item .value {
+        font-weight: 700;
+        font-size: 18px;
+        letter-spacing: -0.3px;
+      }
+
+      .product-detail-item.price .value {
+        color: #e74c3c;
+        font-size: 26px;
+      }
+
+      .product-detail-item.sold .value {
+        color: #3498db;
+      }
+
+      .product-detail-item.stock .value {
+        color: #27ae60;
+      }
+
+      .product-rank {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 18px;
+        box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
+        z-index: 1;
+        border: 3px solid white;
+        letter-spacing: -1px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+      }
+
+      .empty-state i {
+        font-size: 4rem;
+        color: #ddd;
+        margin-bottom: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .section-title {
+          font-size: 1.5rem;
+        }
+
+        .product-card {
+          flex-direction: column;
+        }
+
+        .product-image-wrapper {
+          width: 100%;
+          height: 250px;
+        }
+
+        .product-image {
+          width: 100%;
+          height: 250px;
+        }
+
+        .product-info {
+          padding: 25px;
+          gap: 15px;
+        }
+
+        .product-name {
+          font-size: 20px;
+          margin-bottom: 8px;
+        }
+
+        .product-detail-item {
+          font-size: 15px;
+          padding: 6px 0;
+        }
+
+        .product-detail-item .label {
+          min-width: 90px;
+          font-size: 14px;
+        }
+
+        .product-detail-item .value {
+          font-size: 16px;
+        }
+
+        .product-detail-item.price .value {
+          font-size: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <h1>🏪 OneShop</h1>
+      <p>Top 10 Sản Phẩm Nổi Bật</p>
     </div>
-  </div>
-</div>
 
-<script>
-// ⚙️ Lấy username và token
-const username = localStorage.getItem("username");
-const token = localStorage.getItem("jwtToken");
+    <!-- Products Section -->
+    <div class="container products-section">
+      <div class="row">
+        <!-- Empty State -->
+        <div class="col-12" th:if="${products == null || products.size() == 0}">
+          <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <h3>Chưa có sản phẩm nào</h3>
+            <p class="text-muted">Vui lòng quay lại sau</p>
+          </div>
+        </div>
 
-// Nếu chưa đăng nhập thì về lại login
-if (!token) {
-  window.location.href = "/login";
-}
+        <!-- Product Cards -->
+        <div class="col-12" th:each="product, iterStat : ${products}">
+          <div class="product-card">
+            <div class="product-image-wrapper">
+              <div class="product-rank" th:text="${iterStat.count}">1</div>
+              <img
+                th:src="@{${product.imageUrl}}"
+                th:alt="${product.name}"
+                class="product-image"
+                onerror="this.src='https://via.placeholder.com/250x250?text=No+Image'"
+              />
+            </div>
+            <div class="product-info">
+              <div class="product-name" th:text="${product.name}">
+                Tên sản phẩm
+              </div>
 
-// Hiển thị username
-document.getElementById("usernameDisplay").textContent = username || "Người dùng";
+              <div class="product-detail-item price">
+                <span class="label">Giá:</span>
+                <span
+                  class="value"
+                  th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' đ'"
+                >
+                  0 đ
+                </span>
+              </div>
 
-// ✅ Hàm logout
-function logout() {
-  localStorage.removeItem("jwtToken");
-  localStorage.removeItem("username");
-  window.location.href = "/login";
-}
+              <div class="product-detail-item sold">
+                <span class="label">Đã bán:</span>
+                <span class="value" th:text="${product.sold}">0</span>
+              </div>
 
-// ✅ Gọi API được bảo vệ để test JWT
-async function testProtected() {
-  const res = await fetch("/api/auth/test", {
-    method: "GET",
-    headers: {
-      "Authorization": "Bearer " + localStorage.getItem("jwtToken")
-    }
-  });
+              <div class="product-detail-item stock">
+                <span class="label">Còn lại:</span>
+                <span class="value" th:text="${product.stock}">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  const text = await res.text();
-  const el = document.getElementById("apiResult");
-  if (res.ok) {
-    el.classList.remove("text-danger");
-    el.classList.add("text-success");
-    el.textContent = "✅ Server phản hồi: " + text;
-  } else {
-    el.classList.remove("text-success");
-    el.classList.add("text-danger");
-    el.textContent = "❌ Token không hợp lệ hoặc hết hạn!";
-  }
-}
-</script>
-
-
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

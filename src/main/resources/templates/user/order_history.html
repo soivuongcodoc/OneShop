@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8" />
+    <title>Lịch sử đơn hàng - OneShop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <div class="container my-4">
+      <h2>Lịch sử đơn hàng</h2>
+      <form class="row g-2 mb-3" method="get" th:action="@{/user/orders}">
+        <div class="col-md-4">
+          <select class="form-select" name="status">
+            <option th:selected="${currentStatus == null}" value="">
+              Tất cả trạng thái
+            </option>
+            <option value="PENDING" th:selected="${currentStatus == 'PENDING'}">
+              Chờ xác nhận
+            </option>
+            <option
+              value="CONFIRMED"
+              th:selected="${currentStatus == 'CONFIRMED'}"
+            >
+              Đã xác nhận
+            </option>
+            <option
+              value="SHIPPING"
+              th:selected="${currentStatus == 'SHIPPING'}"
+            >
+              Đang giao
+            </option>
+            <option
+              value="DELIVERED"
+              th:selected="${currentStatus == 'DELIVERED'}"
+            >
+              Đã giao
+            </option>
+            <option
+              value="RETURN_REQUESTED"
+              th:selected="${currentStatus == 'RETURN_REQUESTED'}"
+            >
+              Yêu cầu trả
+            </option>
+            <option
+              value="RETURNED"
+              th:selected="${currentStatus == 'RETURNED'}"
+            >
+              Đã trả hàng
+            </option>
+            <option
+              value="REFUNDING"
+              th:selected="${currentStatus == 'REFUNDING'}"
+            >
+              Đang hoàn tiền
+            </option>
+            <option
+              value="REFUNDED"
+              th:selected="${currentStatus == 'REFUNDED'}"
+            >
+              Đã hoàn tiền
+            </option>
+            <option
+              value="CANCELLED"
+              th:selected="${currentStatus == 'CANCELLED'}"
+            >
+              Đã hủy
+            </option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-primary w-100">Lọc</button>
+        </div>
+      </form>
+
+      <div th:if="${#lists.isEmpty(orders)}" class="alert alert-info">
+        Bạn chưa có đơn hàng nào.
+      </div>
+
+      <div th:if="${!#lists.isEmpty(orders)}">
+        <div class="list-group">
+          <div th:each="o : ${orders}" class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">Đơn #<span th:text="${o.id}">1</span></h5>
+              <small th:text="${o.orderDate}">date</small>
+            </div>
+            <p class="mb-1">
+              Tổng:
+              <strong
+                th:text="${#numbers.formatDecimal(o.totalAmount,0,'COMMA',0,'POINT')}"
+                >0</strong
+              >
+              VNĐ
+            </p>
+            <p class="mb-1">
+              <small>Trạng thái: </small>
+              <span
+                class="badge"
+                th:classappend="${o.status.name() == 'PENDING' ? 'bg-warning' : 
+                                 o.status.name() == 'CONFIRMED' ? 'bg-info' : 
+                                 o.status.name() == 'SHIPPING' ? 'bg-primary' : 
+                                 o.status.name() == 'DELIVERED' ? 'bg-success' : 
+                                 o.status.name() == 'CANCELLED' ? 'bg-danger' : 'bg-secondary'}"
+                th:text="${o.status.name() == 'PENDING' ? 'Chờ xác nhận' : 
+                          o.status.name() == 'CONFIRMED' ? 'Đã xác nhận' : 
+                          o.status.name() == 'SHIPPING' ? 'Đang giao' : 
+                          o.status.name() == 'DELIVERED' ? 'Đã giao' : 
+                          o.status.name() == 'CANCELLED' ? 'Đã hủy' : o.status}"
+                >Chờ xác nhận</span
+              >
+            </p>
+            <div class="mt-2">
+              <a
+                th:href="@{/user/order/{id}(id=${o.id})}"
+                class="btn btn-sm btn-outline-primary"
+                >Xem chi tiết</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

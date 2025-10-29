@@ -1,39 +1,44 @@
 package com.oneshop.config;
 
+import org.sitemesh.builder.SiteMeshFilterBuilder;
+import org.sitemesh.config.ConfigurableSiteMeshFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.sitemesh.builder.SiteMeshFilterBuilder;
-import org.sitemesh.config.ConfigurableSiteMeshFilter;
 
 @Configuration
 public class SiteMeshConfig {
 
-  @Bean
-  public FilterRegistrationBean<ConfigurableSiteMeshFilter> siteMeshFilter() {
-    FilterRegistrationBean<ConfigurableSiteMeshFilter> filter = new FilterRegistrationBean<>();
+    @Bean
+    public FilterRegistrationBean<ConfigurableSiteMeshFilter> siteMeshFilter() {
+        FilterRegistrationBean<ConfigurableSiteMeshFilter> filter = new FilterRegistrationBean<>();
 
-    filter.setFilter(new ConfigurableSiteMeshFilter() {
-      @Override
-      protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
-        builder
-          .addDecoratorPath("/login", "/decorators/main")
-          .addDecoratorPath("/register", "/decorators/main")
-          .addDecoratorPath("/test", "/decorators/main")
-          .addDecoratorPath("/", "/decorators/main")
-          .addDecoratorPath("/dashboard", "/decorators/main")
-          .addDecoratorPath("/vendor/home", "/decorators/main")
-          // tránh chính layout bị decor lần nữa
-          .addExcludedPath("/decorators/*")
-          // bỏ qua tài nguyên tĩnh
-          .addExcludedPath("/css/*")
-          .addExcludedPath("/js/*")
-          .addExcludedPath("/images/*");
-      }
-    });
+        filter.setFilter(new ConfigurableSiteMeshFilter() {
+            @Override
+            protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
+                builder
+                        // Vendor pages dùng vendor layout
+                        .addDecoratorPath("/vendor/*", "/decorators/vendor-layout")
+                        // Admin pages dùng admin layout riêng
+                        .addDecoratorPath("/admin/*", "/decorators/admin-layout")
+                        // Các trang công khai dùng main layout
+                        .addDecoratorPath("/login", "/decorators/main")
+                        .addDecoratorPath("/register", "/decorators/main")
+                        // .addDecoratorPath("/test", "/decorators/main") // removed test page
+                        .addDecoratorPath("/", "/decorators/main")
+                        // tránh chính layout bị decor lần nữa
+                        .addExcludedPath("/decorators/*")
+                        .addExcludedPath("/layout/*")
+                        // bỏ qua tài nguyên tĩnh
+                        .addExcludedPath("/css/*")
+                        .addExcludedPath("/js/*")
+                        .addExcludedPath("/images/*")
+                        .addExcludedPath("/uploads/*");
+            }
+        });
 
-    filter.addUrlPatterns("/*");
-    filter.setOrder(Integer.MIN_VALUE);
-    return filter;
-  }
+        filter.addUrlPatterns("/*");
+        filter.setOrder(Integer.MIN_VALUE);
+        return filter;
+    }
 }

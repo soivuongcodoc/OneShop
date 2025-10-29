@@ -1,0 +1,134 @@
+# DANH SÁCH 20 URLs HÌNH ẢNH SẢN PHẨM MỸ PHẨM
+# Lưu ý: Tải về và đổi tên theo tên file trong SQL
+
+# Beauty World Shop
+1. cerave-cleanser.jpg
+https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=80
+(Sữa rửa mặt trong chai pump)
+
+2. lrp-effaclar.jpg
+https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80
+(Kem dưỡng trong tube trắng)
+
+3. 3ce-liptint.jpg
+https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=800&q=80
+(Son kem màu đẹp)
+
+4. to-vitaminc.jpg
+https://images.unsplash.com/photo-1620916297860-5fdc2f9595bc?w=800&q=80
+(Serum trong lọ nhỏ giọt)
+
+5. maybelline-fitme.jpg
+https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&q=80
+(Phấn nền dạng lỏng)
+
+# Nature Glow Shop
+6. innisfree-cleanser.jpg
+https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80
+(Sữa rửa mặt xanh lá - organic)
+
+7. somebymi-mask.jpg
+https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=800&q=80
+(Mặt nạ giấy trong gói)
+
+8. klairs-toner.jpg
+https://images.unsplash.com/photo-1570554886111-e80fcca6a029?w=800&q=80
+(Nước hoa hồng trong chai trong suốt)
+
+9. loccitane-shower.jpg
+https://images.unsplash.com/photo-1556228852-80f85c4dd8b0?w=800&q=80
+(Sữa tắm cao cấp)
+
+10. aromatica-shampoo.jpg
+https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=800&q=80
+(Dầu gội organic trong chai)
+
+# Skincare VN Shop
+11. acnes-spot.jpg
+https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80
+(Kem trị mụn dạng tube nhỏ)
+
+12. vichy-serum.jpg
+https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80
+(Serum trong chai pump)
+
+13. biore-uv.jpg
+https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=80
+(Kem chống nắng dạng gel)
+
+14. laneige-mask.jpg
+https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=800&q=80
+(Mặt nạ ngủ trong hũ xanh dương)
+
+15. cosrx-aha.jpg
+https://images.unsplash.com/photo-1570554886111-e80fcca6a029?w=800&q=80
+(Tinh chất tẩy tế bào chết)
+
+# Nước hoa
+16. chanel-coco.jpg
+https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&q=80
+(Nước hoa Chanel sang trọng)
+
+17. dior-sauvage.jpg
+https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=800&q=80
+(Nước hoa Dior nam tính)
+
+# Sản phẩm mới
+18. neutrogena-hydro.jpg
+https://images.unsplash.com/photo-1556228852-80f85c4dd8b0?w=800&q=80
+(Kem dưỡng ẩm dạng gel)
+
+19. maybelline-mascara.jpg
+https://images.unsplash.com/photo-1631214524020-7e18db9a8f92?w=800&q=80
+(Mascara cong mi)
+
+20. innisfree-cherry.jpg
+https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80
+(Kem dưỡng trắng màu hồng)
+
+========================================
+HƯỚNG DẪN TẢI VỀ:
+
+CÁCH 1: Tải thủ công (Dễ nhất)
+1. Copy từng URL vào trình duyệt
+2. Click chuột phải vào ảnh > Save Image As
+3. Đổi tên file theo tên trong danh sách
+4. Lưu vào thư mục: uploads/products/
+
+CÁCH 2: Dùng PowerShell (Nhanh hơn)
+Chạy script sau trong PowerShell tại thư mục gốc của project:
+
+$urls = @(
+    @{name="cerave-cleanser.jpg"; url="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=80"},
+    @{name="lrp-effaclar.jpg"; url="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80"},
+    @{name="3ce-liptint.jpg"; url="https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=800&q=80"},
+    @{name="to-vitaminc.jpg"; url="https://images.unsplash.com/photo-1620916297860-5fdc2f9595bc?w=800&q=80"},
+    @{name="maybelline-fitme.jpg"; url="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=800&q=80"},
+    @{name="innisfree-cleanser.jpg"; url="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80"},
+    @{name="somebymi-mask.jpg"; url="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=800&q=80"},
+    @{name="klairs-toner.jpg"; url="https://images.unsplash.com/photo-1570554886111-e80fcca6a029?w=800&q=80"},
+    @{name="loccitane-shower.jpg"; url="https://images.unsplash.com/photo-1556228852-80f85c4dd8b0?w=800&q=80"},
+    @{name="aromatica-shampoo.jpg"; url="https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?w=800&q=80"},
+    @{name="acnes-spot.jpg"; url="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&q=80"},
+    @{name="vichy-serum.jpg"; url="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80"},
+    @{name="biore-uv.jpg"; url="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=80"},
+    @{name="laneige-mask.jpg"; url="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=800&q=80"},
+    @{name="cosrx-aha.jpg"; url="https://images.unsplash.com/photo-1570554886111-e80fcca6a029?w=800&q=80"},
+    @{name="chanel-coco.jpg"; url="https://images.unsplash.com/photo-1541643600914-78b084683601?w=800&q=80"},
+    @{name="dior-sauvage.jpg"; url="https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=800&q=80"},
+    @{name="neutrogena-hydro.jpg"; url="https://images.unsplash.com/photo-1556228852-80f85c4dd8b0?w=800&q=80"},
+    @{name="maybelline-mascara.jpg"; url="https://images.unsplash.com/photo-1631214524020-7e18db9a8f92?w=800&q=80"},
+    @{name="innisfree-cherry.jpg"; url="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80"}
+)
+
+# Tạo thư mục nếu chưa có
+New-Item -ItemType Directory -Force -Path "uploads\products"
+
+# Tải từng ảnh
+foreach ($item in $urls) {
+    Write-Host "Đang tải $($item.name)..."
+    Invoke-WebRequest -Uri $item.url -OutFile "uploads\products\$($item.name)"
+}
+
+Write-Host "✅ Đã tải xong 20 ảnh!"
+

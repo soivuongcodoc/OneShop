@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết sản phẩm - OneShop Vendor</title>
+</head>
+<body>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Chi tiết sản phẩm</h2>
+        <a th:href="@{/vendor/products}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <!-- Cột bên trái: Hình ảnh -->
+                <div class="col-md-4">
+                    <img th:src="@{${product.imageUrl}}" 
+                         th:alt="${product.name}" 
+                         class="img-fluid rounded shadow-sm"
+                         style="max-height: 400px; object-fit: cover; width: 100%;">
+                </div>
+
+                <!-- Cột bên phải: Thông tin sản phẩm -->
+                <div class="col-md-8">
+                    <h3 class="mb-3" th:text="${product.name}">Tên sản phẩm</h3>
+                    
+                    <table class="table table-borderless">
+                        <tr>
+                            <th width="150">Mã sản phẩm:</th>
+                            <td><span class="badge bg-secondary" th:text="'#' + ${product.id}">#1</span></td>
+                        </tr>
+                        <tr>
+                            <th>Giá bán:</th>
+                            <td>
+                                <span class="text-danger fw-bold fs-5" 
+                                      th:text="${#numbers.formatDecimal(product.price,0,'COMMA',0,'POINT')} + ' ₫'">
+                                    250,000 ₫
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Số lượng tồn:</th>
+                            <td>
+                                <span class="badge bg-info" th:text="${product.stock} + ' sản phẩm'">50 sản phẩm</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Danh mục:</th>
+                            <td>
+                                <span class="badge bg-primary" th:text="${product.category.name}">Dưỡng da</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Trạng thái:</th>
+                            <td>
+                                <span th:classappend="${product.active} ? 'badge bg-success' : 'badge bg-secondary'"
+                                      th:text="${product.active} ? 'Đang bán' : 'Ngưng bán'">
+                                    Đang bán
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Ngày tạo:</th>
+                            <td th:text="${#temporals.format(product.createdAt, 'dd/MM/yyyy HH:mm')}">
+                                01/01/2024 10:00
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div class="mt-3">
+                        <h5 class="fw-bold">Mô tả sản phẩm:</h5>
+                        <p class="text-muted" th:text="${product.description}">
+                            Mô tả chi tiết về sản phẩm...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phần đánh giá -->
+            <hr class="my-4">
+            <h4 class="fw-bold mb-3">
+                <i class="bi bi-star-fill text-warning"></i> Đánh giá sản phẩm 
+                <span class="badge bg-secondary" th:text="${#lists.size(reviews)}">0</span>
+            </h4>
+
+            <div th:if="${#lists.isEmpty(reviews)}" class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Chưa có đánh giá nào cho sản phẩm này.
+            </div>
+
+            <div th:unless="${#lists.isEmpty(reviews)}">
+                <div class="card mb-3" th:each="review : ${reviews}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">
+                                    <i class="bi bi-person-circle"></i> 
+                                    Khách hàng #<span th:text="${review.userId}">123</span>
+                                </h6>
+                                <div class="mb-2">
+                                    <span th:each="i : ${#numbers.sequence(1, review.rating)}">
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    </span>
+                                    <span th:each="i : ${#numbers.sequence(review.rating + 1, 5)}">
+                                        <i class="bi bi-star text-muted"></i>
+                                    </span>
+                                    <small class="text-muted ms-2" 
+                                           th:text="'(' + ${review.rating} + '/5)'">
+                                        (5/5)
+                                    </small>
+                                </div>
+                                <p class="mb-0" th:text="${review.comment}">
+                                    Sản phẩm rất tốt, tôi rất hài lòng!
+                                </p>
+                            </div>
+                            <small class="text-muted" 
+                                   th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy')}">
+                                01/01/2024
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nút hành động ở cuối trang -->
+    <div class="mt-4 d-flex gap-2">
+        <a th:href="@{'/vendor/products/' + ${product.id} + '/edit'}" class="btn btn-warning">
+            <i class="bi bi-pencil-square"></i> Chỉnh sửa
+        </a>
+        <form th:action="@{'/vendor/products/' + ${product.id} + '/delete'}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
+                <i class="bi bi-trash"></i> Xóa sản phẩm
+            </button>
+        </form>
+        <a th:href="@{/vendor/products}" class="btn btn-secondary ms-auto">
+            <i class="bi bi-arrow-left"></i> Quay lại danh sách
+        </a>
+    </div>
+</body>
+</html>

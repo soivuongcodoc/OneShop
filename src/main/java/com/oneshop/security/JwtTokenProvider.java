@@ -14,60 +14,59 @@ import java.util.List;
 
 @Component
 public class JwtTokenProvider {
-    private final Key key;
-    private final long validityMs;
+  private final Key key;
+  private final long validityMs;
 
-    public JwtTokenProvider(
-            @Value("${app.jwt.secret}") String secret,
-            @Value("${app.jwt.expiration}") long validityMs) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
-        this.validityMs = validityMs;
-    }
+  public JwtTokenProvider(
+      @Value("${app.jwt.secret}") String secret,
+      @Value("${app.jwt.expiration}") long validityMs) {
+    this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    this.validityMs = validityMs;
+  }
 
-    
-    public String generateToken(User user) {
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + validityMs);
+  // Legacy: subject-only token (kept for compatibility in case some clients rely on it)
+  public String generateToken(String subject) {
+    Date now = new Date();
+    Date expiry = new Date(now.getTime() + validityMs);
+    return Jwts.builder()
+        .setSubject(subject)
+        .setIssuedAt(now)
+        .setExpiration(expiry)
+        .signWith(key, SignatureAlgorithm.HS256)
+        .compact();
+  }
 
-        List<String> roles = user.getRoles().stream()
-                .map(Role::getName)
-                .toList();
+  // New: generate token including roles claim
+  public String generateToken(User user) {
+    Date now = new Date();
+    Date expiry = new Date(now.getTime() + validityMs);
+    List<String> roles = user.getRoles().stream().map(Role::getName).toList();
+    return Jwts.builder()
+        .setSubject(user.getUsername())
+        .claim("roles", roles)
+        .setIssuedAt(now)
+        .setExpiration(expiry)
+        .signWith(key, SignatureAlgorithm.HS256)
+        .compact();
+  }
 
-        return Jwts.builder()
-                .setSubject(user.getUsername())
-                .claim("roles", roles)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
+  public String getSubject(String token) {
+    return Jwts.parserBuilder().setSigningKey(key).build()
+        .parseClaimsJws(token).getBody().getSubject();
+  }
 
-    // ✅ Lấy username (subject)
-    public String getSubject(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
+  @SuppressWarnings("unchecked")
+  public List<String> getRoles(String token) {
+    return (List<String>) Jwts.parserBuilder().setSigningKey(key).build()
+        .parseClaimsJws(token).getBody().get("roles", List.class);
+  }
 
-    // ✅ Lấy roles từ token
-    public List<String> getRoles(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody().get("roles", List.class);
-    }
-
-    // ✅ Kiểm tra token hợp lệ
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
-    }
+  public boolean validateToken(String token) {
+      try {
+          Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+          return true;
+      } catch (JwtException | IllegalArgumentException e) {
+          return false;
+      }
+  }
 }

@@ -1,40 +1,79 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" sitemesh:decorate="~{decorators/main}">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard - OneShop</title>
 </head>
 <body>
-<div class="container mt-5 text-center">
-    <h2 class="text-primary">👑 Chào mừng Admin!</h2>
-    <p>Đây là khu vực quản trị hệ thống.</p>
+    <h2 class="fw-bold mb-3">Trang quản trị</h2>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Người dùng</h5>
+                    <p class="display-6" th:text="${userCount}">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Sản phẩm</h5>
+                    <p class="display-6" th:text="${productCount}">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Đơn hàng</h5>
+                    <p class="display-6" th:text="${orderCount}">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Doanh thu</h5>
+                    <p class="display-6" th:text="${revenue}">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <p class="text-muted">
-        Xin chào,
-        <span id="who"></span>
-        (<span id="role"></span>)
-    </p>
-
-    <a href="/logout" class="btn btn-danger mt-3">Đăng xuất</a>
-</div>
-
-<script>
-// Hiển thị info admin từ localStorage cho vui thôi, không gọi API nữa
-const token = localStorage.getItem("jwtToken");
-const username = localStorage.getItem("username");
-const role = localStorage.getItem("role");
-
-if (!token) {
-    // chưa đăng nhập -> quay lại login
-    window.location.href = "/login";
-} else {
-    // set text UI
-    document.getElementById("who").textContent = username || "admin";
-    document.getElementById("role").textContent = role || "ROLE_ADMIN";
-}
-
-// NOTE: KHÔNG fetch /api/admin/dashboard ở đây nữa.
-// Không auto chuyển hướng /403 ở đây nữa.
-</script>
+    <h4 class="fw-bold mb-3 border-bottom pb-2">Quản lý nhanh</h4>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card border-primary">
+                <div class="card-body text-center">
+                    <i class="bi bi-people fs-1 text-primary"></i>
+                    <h5 class="card-title mt-2">Quản lý người dùng</h5>
+                    <a th:href="@{/admin/users}" class="btn btn-outline-primary mt-2">
+                        <i class="bi bi-arrow-right-circle"></i> Truy cập
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-success">
+                <div class="card-body text-center">
+                    <i class="bi bi-tags fs-1 text-success"></i>
+                    <h5 class="card-title mt-2">Quản lý danh mục</h5>
+                    <a th:href="@{/admin/categories}" class="btn btn-outline-success mt-2">
+                        <i class="bi bi-arrow-right-circle"></i> Truy cập
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-info">
+                <div class="card-body text-center">
+                    <i class="bi bi-box-seam fs-1 text-info"></i>
+                    <h5 class="card-title mt-2">Sản phẩm</h5>
+                    <p class="text-muted small">Đang phát triển</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
