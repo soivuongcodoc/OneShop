@@ -71,16 +71,35 @@
         border-radius: 12px;
         font-weight: 600;
       }
+
+      /* Responsive for Back Button */
+      @media (max-width: 768px) {
+        .d-flex.justify-content-between.align-items-center {
+          flex-direction: column;
+          align-items: flex-start !important;
+        }
+        .d-flex.justify-content-between .btn {
+          margin-top: 1rem;
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="container my-5">
       <!-- Header -->
       <div class="mb-4">
-        <h2 class="fw-bold">🏆 Top 20 Sản Phẩm</h2>
-        <p class="text-muted">
-          Khám phá những sản phẩm tốt nhất trong từng danh mục
-        </p>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h2 class="fw-bold mb-2">🏆 Top 20 Sản Phẩm</h2>
+            <p class="text-muted mb-0">
+              Khám phá những sản phẩm tốt nhất trong từng danh mục
+            </p>
+          </div>
+          <a href="/user/dashboard" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-2"></i>Quay lại Dashboard
+          </a>
+        </div>
       </div>
 
       <!-- Tabs Navigation -->

@@ -185,22 +185,47 @@
         font-size: 18px;
         margin-top: 5px;
       }
+
+      /* Responsive for Back Button */
+      @media (max-width: 768px) {
+        .d-flex.justify-content-between.align-items-center {
+          flex-direction: column;
+          align-items: flex-start !important;
+        }
+        .d-flex.justify-content-between nav {
+          margin-bottom: 1rem;
+        }
+        .d-flex.justify-content-between .btn {
+          width: 100%;
+          margin-left: 0 !important;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="container my-5" th:if="${product} != null">
-      <!-- Breadcrumb -->
-      <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
-          <li class="breadcrumb-item">
-            <a th:href="@{/products}">Sản phẩm</a>
-          </li>
-          <li class="breadcrumb-item active" th:text="${product.category.name}">
-            Danh mục
-          </li>
-        </ol>
-      </nav>
+      <!-- Breadcrumb & Back Button -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <nav aria-label="breadcrumb" class="flex-grow-1">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+            <li class="breadcrumb-item">
+              <a th:href="@{/products}">Sản phẩm</a>
+            </li>
+            <li class="breadcrumb-item active" th:text="${product.category.name}">
+              Danh mục
+            </li>
+          </ol>
+        </nav>
+        <!-- Show button only if user is logged in -->
+        <a 
+          href="/user/dashboard" 
+          class="btn btn-outline-primary ms-3"
+          th:if="${#authorization.expression('isAuthenticated()')}"
+        >
+          <i class="fas fa-arrow-left me-2"></i>Quay lại Dashboard
+        </a>
+      </div>
 
       <!-- Product Detail -->
       <div class="product-detail-container">
