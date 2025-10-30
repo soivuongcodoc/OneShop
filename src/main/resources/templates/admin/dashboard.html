@@ -1,49 +1,10 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
-<html xmlns:th="http://www.thymeleaf.org" sitemesh:decorate="~{decorators/main}">
-=======
-<html xmlns:th="http://www.thymeleaf.org">
->>>>>>> admin
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard - OneShop</title>
 </head>
 <body>
-<<<<<<< HEAD
-<div class="container mt-5 text-center">
-    <h2 class="text-primary">👑 Chào mừng Admin!</h2>
-    <p>Đây là khu vực quản trị hệ thống.</p>
 
-    <p class="text-muted">
-        Xin chào,
-        <span id="who"></span>
-        (<span id="role"></span>)
-    </p>
-
-    <a href="/logout" class="btn btn-danger mt-3">Đăng xuất</a>
-</div>
-
-<script>
-// Hiển thị info admin từ localStorage cho vui thôi, không gọi API nữa
-const token = localStorage.getItem("jwtToken");
-const username = localStorage.getItem("username");
-const role = localStorage.getItem("role");
-
-if (!token) {
-    // chưa đăng nhập -> quay lại login
-    window.location.href = "/login";
-} else {
-    // set text UI
-    document.getElementById("who").textContent = username || "admin";
-    document.getElementById("role").textContent = role || "ROLE_ADMIN";
-}
-
-// NOTE: KHÔNG fetch /api/admin/dashboard ở đây nữa.
-// Không auto chuyển hướng /403 ở đây nữa.
-</script>
-</body>
-</html>
-=======
     <h2 class="fw-bold mb-3">Trang quản trị</h2>
     <div class="row g-3 mb-4">
         <div class="col-md-3">
@@ -52,7 +13,7 @@ if (!token) {
                     <h5 class="card-title">Người dùng</h5>
                     <p class="display-6" th:text="${userCount}">0</p>
                 </div>
-            </div>
+          </div>
         </div>
         <div class="col-md-3">
             <div class="card">
@@ -118,4 +79,3 @@ if (!token) {
     </div>
 </body>
 </html>
->>>>>>> admin
