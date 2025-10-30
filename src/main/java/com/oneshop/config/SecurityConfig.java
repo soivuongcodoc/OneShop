@@ -12,6 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
+import com.oneshop.security.JwtAuthenticationFilter;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -31,14 +36,29 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
       http
           .csrf(csrf -> csrf.disable()) // REST API + JWT => disable CSRF
-          .formLogin(form -> form.disable()) // Không dùng form login
-          .httpBasic(basic -> basic.disable()) // Không dùng HTTP Basic
+          .cors(cors -> cors.disable())
+          // .formLogin(form -> form.disable()) // Không dùng form login
+          // .httpBasic(basic -> basic.disable()) // Không dùng HTTP Basic
           .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // stateless
           .authorizeHttpRequests(auth -> auth
+          // ✅ Cho phép public các tài nguyên tĩnh và trang auth
+
+                .requestMatchers(
+                    "/", "/index",
+                    "/css/**", "/js/**", "/images/**",
+                    "/decorators/**", "/fragments/**",
+                    "/auth/**",
+                    "/login", "/register", "/verify", "/verify/**",
+                    "/forgot-password", "/reset-password",
+                    "/api/auth/**",
+                    "/favicon.ico","user/oder/**"
+                ).permitAll()
+
               .requestMatchers("/vendor/**").hasAnyRole("VENDOR", "ADMIN")
               .requestMatchers("/admin/**").hasRole("ADMIN")
-              .anyRequest().permitAll()
-          )
+              .requestMatchers("/home").hasAnyRole("USER", "ADMIN","VENDOR")
+              .anyRequest().authenticated()
+          ) 
           .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
       return http.build();

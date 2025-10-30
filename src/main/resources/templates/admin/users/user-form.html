@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${pageTitle}">Thêm / Sửa người dùng</title>
+</head>
+<body>
+<div class="container">
+  <h4 th:text="${pageTitle}">Thêm người dùng</h4>
+
+  <form th:action="${mode == 'create'} ? @{/admin/users} : @{/admin/users/{id}(id=${userId})}" th:object="${form}" method="post">
+    <div class="mb-3">
+      <label class="form-label">Tên đăng nhập</label>
+      <input type="text" th:field="*{username}" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" th:field="*{email}" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Mật khẩu <small th:if="${mode=='edit'}">(để trống nếu không đổi)</small></label>
+      <input type="password" th:field="*{password}" class="form-control" th:placeholder="${mode=='edit'} ? '*****' : ''" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Vai trò</label>
+      <div th:each="r : ${roles}">
+        <label class="form-check">
+          <input class="form-check-input" type="checkbox" th:value="${r}" th:name="roles"
+                 th:checked="${form.roles != null} ? ${form.roles.contains(r)} : false" />
+          <span class="form-check-label" th:text="${r}">ROLE_USER</span>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Lưu</button>
+    <a th:href="@{/admin/users}" class="btn btn-secondary">Hủy</a>
+  </form>
+</div>
+</body>
+</html>

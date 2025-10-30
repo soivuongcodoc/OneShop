@@ -10,6 +10,9 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class ProductForm {
+
+    private Long shopId;
+
     @NotNull
     private Long categoryId;
 

@@ -159,6 +159,7 @@ public class VendorController {
         model.addAttribute("form", new ProductForm());
         model.addAttribute("categories", categoryRepo.findAll());
         model.addAttribute("mode", "create");
+        model.addAttribute("productId", null); // Thêm productId=null để template không bị lỗi
         return "vendor/product-form";
     }
 

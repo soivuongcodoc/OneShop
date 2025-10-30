@@ -1,7 +1,11 @@
 package com.oneshop.dto.auth;
 
-import jakarta.validation.constraints.*;
-import lombok.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 public class AuthDtos {
   @Getter @Setter
@@ -12,6 +16,7 @@ public class AuthDtos {
     private String email;
     @NotBlank @Size(min=6, max=100)
     private String password;
+    private String fullName;
   }
 
   @Getter @Setter
@@ -51,6 +56,6 @@ public class AuthDtos {
     private String token;
     private String tokenType = "Bearer";
     private String username;
-    private java.util.List<String> roles;
+    private String role;
   }
 }
