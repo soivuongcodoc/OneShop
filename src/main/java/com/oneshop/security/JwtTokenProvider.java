@@ -1,30 +1,20 @@
 package com.oneshop.security;
 
-<<<<<<< HEAD
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-=======
-import java.security.Key;
-import java.util.Date;
-import java.util.List;
 
->>>>>>> admin
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.oneshop.entity.Role;
 import com.oneshop.entity.User;
 
-<<<<<<< HEAD
+
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-=======
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
->>>>>>> admin
+
 
 @Component
 public class JwtTokenProvider {
