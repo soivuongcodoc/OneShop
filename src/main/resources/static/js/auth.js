@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 // // ⚙️ Tự động thêm JWT vào tất cả fetch requests
 // const originalFetch = window.fetch;
 // window.fetch = async (url, options = {}) => {
@@ -29,7 +28,6 @@
 //   document.cookie = "JWT=; Max-Age=0; Path=/";
 //   window.location.href = "/login";
 // }
->>>>>>> admin
 // /static/js/auth.js
 
 // Ghi đè window.fetch để tự động gắn Authorization header cho mọi request sau khi đăng nhập
