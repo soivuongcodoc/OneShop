@@ -6,33 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PageController {
 
-<<<<<<< HEAD
-    // Trang test
-    @GetMapping("/test")
-    public String testPage() {
-        return "test";
-    }
-    @GetMapping("/admin/dashboard")
-    public String dashboard() {
-        return "admin/dashboard"; // Tạo file dashboard.html
-    }
-=======
-    // Trang test đã bỏ
-
->>>>>>> admin
     // Trang đăng nhập
     @GetMapping("/login")
     public String loginPage() {
         return "auth/login"; // file: templates/auth/login.html
     }
-<<<<<<< HEAD
-    @GetMapping("/vendor/home")
-    public String home() {
-        return "vendor/home"; // Tạo file home.html
-    }
-=======
 
->>>>>>> admin
     // Trang đăng ký
     @GetMapping("/register")
     public String registerPage() {
