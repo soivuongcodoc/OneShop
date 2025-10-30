@@ -25,16 +25,7 @@ public class SiteMeshConfig {
       @Override
       protected void applyCustomConfiguration(SiteMeshFilterBuilder builder) {
         builder
-<<<<<<< HEAD
-          .addDecoratorPath("/login", "/decorators/main")
-          .addDecoratorPath("/register", "/decorators/main")
-          .addDecoratorPath("/test", "/decorators/main")
-          .addDecoratorPath("/", "/decorators/main")
-          .addDecoratorPath("/dashboard", "/decorators/main")
-          .addDecoratorPath("/vendor/home", "/decorators/main")
-          // tránh chính layout bị decor lần nữa
-          .addExcludedPath("/decorators/*")
-=======
+
           // Vendor pages dùng vendor layout
           .addDecoratorPath("/vendor/*", "/decorators/vendor-layout")
           // Admin pages dùng admin layout riêng
@@ -49,7 +40,7 @@ public class SiteMeshConfig {
           // tránh chính layout bị decor lần nữa
           .addExcludedPath("/decorators/*")
           .addExcludedPath("/layout/*")
->>>>>>> admin
+
           // bỏ qua tài nguyên tĩnh
           .addExcludedPath("/css/*")
           .addExcludedPath("/js/*")
