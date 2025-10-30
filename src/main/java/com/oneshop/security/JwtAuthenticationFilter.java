@@ -1,6 +1,6 @@
 package com.oneshop.security;
 
-<<<<<<< HEAD
+
 import com.oneshop.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,13 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-=======
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
->>>>>>> admin
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +17,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-<<<<<<< HEAD
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -37,23 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final UserRepository userRepo;
 
 	@Override
-=======
-import com.oneshop.repository.UserRepository;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-
-@Component @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-  private final JwtTokenProvider jwt;
-  private final UserRepository userRepo;
-
- @Override
->>>>>>> admin
 	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
 			throws ServletException, IOException {
 
