@@ -22,6 +22,7 @@ import com.oneshop.repository.CartRepository;
 import com.oneshop.repository.OrderRepository;
 import com.oneshop.repository.ProductRepository;
 import com.oneshop.repository.ReviewRepository;
+import com.oneshop.repository.ShopRepository;
 import com.oneshop.repository.ViewedProductRepository;
 import com.oneshop.repository.WishlistRepository;
 import com.oneshop.repository.CustomerRepository;
@@ -49,6 +50,9 @@ public class UserController {
 
     @Autowired
     private ViewedProductRepository viewedProductRepository;
+
+    @Autowired
+    private ShopRepository shopRepository;
 
     @Autowired
     private CartRepository cartRepository;
@@ -218,10 +222,19 @@ public class UserController {
             return "redirect:/user/products";
         }
 
+        Product product = opt.get();
+        
+        // Load shop info if product has shopId
+        if (product.getShopId() != null) {
+            shopRepository.findById(product.getShopId()).ifPresent(shop -> {
+                model.addAttribute("shop", shop);
+            });
+        }
+
         // Load reviews
         var reviews = reviewRepository.findByProductIdOrderByCreatedAtDesc(id);
 
-        model.addAttribute("product", opt.get());
+        model.addAttribute("product", product);
         model.addAttribute("reviews", reviews);
         return "user/product-detail";
     }

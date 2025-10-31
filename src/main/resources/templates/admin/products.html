@@ -47,8 +47,10 @@
                class="rounded">
         </td>
         <td>
-          <strong th:text="${product.name}">Product Name</strong><br>
-          <small class="text-muted" th:text="${product.category?.name ?: 'Chưa phân loại'}">Category</small>
+          <strong th:text="${product.name}">Product Name</strong>
+        </td>
+        <td>
+          <span th:text="${product.category?.name ?: 'Chưa phân loại'}">Category</span>
         </td>
         <td th:text="${shopNames[product.shopId] ?: 'N/A'}">Shop Name</td>
         <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">100,000 ₫</td>

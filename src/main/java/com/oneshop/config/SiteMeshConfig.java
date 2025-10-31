@@ -32,6 +32,9 @@ public class SiteMeshConfig {
                         // tránh chính layout bị decor lần nữa
                         .addExcludedPath("/decorators/*")
                         .addExcludedPath("/layout/*")
+                        // exclude notifications page (custom header)
+                        .addExcludedPath("/notifications")
+                        .addExcludedPath("/notifications/*")
                         // bỏ qua tài nguyên tĩnh
                         .addExcludedPath("/css/*")
                         .addExcludedPath("/js/*")

@@ -114,8 +114,8 @@ SET IDENTITY_INSERT products OFF;
 SET IDENTITY_INSERT payment_methods ON;
 INSERT INTO payment_methods (id, name, display_name, active) VALUES
 (1, 'COD', N'Thanh toán khi nhận hàng', 1),
-(2, 'VNPAY', N'Thanh toán qua VNPay', 1),
-(3, 'MOMO', N'Thanh toán qua MoMo', 1);
+(2, 'VNPAY', N'Thanh toán qua VNPay', 0),
+(3, 'MOMO', N'Thanh toán qua MoMo', 0);
 SET IDENTITY_INSERT payment_methods OFF;
 
 -- 8. COUPONS (Mã giảm giá)

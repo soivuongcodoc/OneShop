@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sitemesh="http://www.opensymphony.com/sitemesh/decorator"
       sitemesh:decorate="~{decorators/user-layout}">
@@ -63,12 +64,6 @@
                             <input type="tel" class="form-control" id="phone" th:field="*{phone}" 
                                    placeholder="0123456789" required maxlength="50">
                             <div class="form-text">Số điện thoại liên hệ của shop</div>
-                        </div>
-                        
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle"></i> 
-                            <strong>Lưu ý:</strong> Sau khi gửi yêu cầu, admin sẽ xem xét và phê duyệt. 
-                            Bạn sẽ nhận được thông báo qua email khi yêu cầu được xử lý.
                         </div>
                         
                         <div class="d-grid gap-2">

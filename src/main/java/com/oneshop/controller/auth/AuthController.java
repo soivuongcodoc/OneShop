@@ -42,6 +42,12 @@ public class AuthController {
     return ResponseEntity.ok("Xác thực email thành công!");
   }
 
+  @PostMapping("/verify-email")
+  public ResponseEntity<?> verifyEmail(@Valid @RequestBody VerifyEmailRequest req) {
+    authService.verifyEmail(req);
+    return ResponseEntity.ok(Map.of("body", "Xác thực email thành công!"));
+  }
+
   @PostMapping("/login")
   public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest req) {
     return ResponseEntity.ok(authService.login(req));

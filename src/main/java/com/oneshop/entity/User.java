@@ -30,6 +30,9 @@ public class User {
   @Column(unique = true, nullable = false, length = 150)
   private String email;
 
+  @Column(name = "full_name", length = 150)
+  private String fullName;
+
   @Column(nullable = false)
   private String password; // BCrypt
 //  private boolean emailVerified = false;

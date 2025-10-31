@@ -9,11 +9,13 @@ import com.oneshop.repository.CategoryRepository;
 import com.oneshop.repository.AdminProductRepository;
 import com.oneshop.repository.ShopRepository;
 import com.oneshop.service.admin.ProductService;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +40,10 @@ public class AdminProductController {
     private ShopRepository shopRepo;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private com.oneshop.service.NotificationService notificationService;
+    @Autowired
+    private EntityManager entityManager;
 
    @GetMapping
     public String listProducts(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
@@ -183,9 +189,27 @@ public class AdminProductController {
     }
 
     @PostMapping("/{id}/delete")
+    @Transactional
     public String deleteProduct(@PathVariable Long id) {
         var p = productRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+        
+        // Gửi thông báo cho vendor nếu sản phẩm thuộc về shop
+        if (p.getShopId() != null) {
+            shopRepo.findById(p.getShopId()).ifPresent(shop -> {
+                notificationService.createProductDeletedNotification(
+                    shop.getVendor().getId(),
+                    p.getId(),
+                    p.getName()
+                );
+            });
+        }
+        
+        // Xóa tất cả cart items liên quan đến sản phẩm này
+        entityManager.createQuery("DELETE FROM CartItemEntity c WHERE c.product.id = :productId")
+                .setParameter("productId", id)
+                .executeUpdate();
+        
         // Xóa ảnh nếu có
         if (p.getImageUrl() != null && p.getImageUrl().startsWith("/images/products/")) {
             String old = p.getImageUrl().substring("/images/products/".length());

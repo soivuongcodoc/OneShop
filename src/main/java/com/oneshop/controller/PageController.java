@@ -68,44 +68,11 @@ public class PageController {
     }
 
     /**
-     * Trang danh sách sản phẩm cho Guest - hỗ trợ lọc theo danh mục
+     * Redirect /products to home page
      */
     @GetMapping("/products")
-    public String productsPage(
-            @RequestParam(value = "q", required = false) String q,
-            @RequestParam(value = "category", required = false) Long categoryId,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            Model model) {
-
-        Page<Product> p;
-
-        // Ưu tiên tìm kiếm theo từ khóa
-        if (q != null && !q.isBlank()) {
-            p = productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                    q, q, PageRequest.of(page, 20)
-            );
-            model.addAttribute("q", q);
-        } // Sau đó lọc theo category
-        else if (categoryId != null) {
-            p = productRepository.findByCategoryId(categoryId, PageRequest.of(page, 20));
-            model.addAttribute("categoryId", categoryId);
-            // Lấy tên category
-            categoryRepository.findById(categoryId).ifPresent(cat
-                    -> model.addAttribute("selectedCategory", cat)
-            );
-        } // Mặc định hiển thị tất cả (tăng số lượng)
-        else {
-            p = productRepository.findAll(PageRequest.of(page, 50));
-        }
-
-        // Lấy danh sách categories để hiển thị
-        var categories = categoryRepository.findAll();
-
-        model.addAttribute("categories", categories);
-        model.addAttribute("products", p.getContent());
-        model.addAttribute("totalPages", p.getTotalPages());
-        model.addAttribute("currentPage", page);
-        return "product"; // templates/product.html
+    public String productsPage() {
+        return "redirect:/";
     }
 
 }

@@ -6,6 +6,7 @@ import com.oneshop.entity.OrderStatus;
 import com.oneshop.entity.User;
 import com.oneshop.repository.OrderDetailRepository;
 import com.oneshop.repository.OrderRepository;
+import com.oneshop.repository.ShopRepository;
 import com.oneshop.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ public class UserOrderController {
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final UserService userService;
+    private final ShopRepository shopRepository;
 
     @GetMapping
     public String listOrders(Model model) {
@@ -51,6 +53,13 @@ public class UserOrderController {
         }
         
         List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(id);
+        
+        // Load shop info
+        if (order.getShopId() != null) {
+            shopRepository.findById(order.getShopId()).ifPresent(shop -> {
+                model.addAttribute("shop", shop);
+            });
+        }
         
         model.addAttribute("order", order);
         model.addAttribute("orderDetails", orderDetails);

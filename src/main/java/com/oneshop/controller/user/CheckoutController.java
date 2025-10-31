@@ -250,14 +250,7 @@ public class CheckoutController {
         cart.getItems().clear();
         cartRepo.save(cart);
 
-        if ("COD".equalsIgnoreCase(payment)) {
-            return "redirect:/user/orders";
-        } else {
-            if ("VNPAY".equalsIgnoreCase(payment)) {
-                return "redirect:/payment/vnpay/create?orderId=" + order.getId();
-            }
-            // TODO: MoMo flow
-            return "redirect:/user/orders";
-        }
+        // All payment methods redirect to orders page (COD only for now)
+        return "redirect:/user/orders";
     }
 }

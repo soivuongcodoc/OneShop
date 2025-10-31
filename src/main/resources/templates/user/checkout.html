@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
@@ -80,14 +81,11 @@
                            onclick="clearNewAddress()" />
                     <label class="form-check-label w-100" th:for="'addr_' + ${addr.id}">
                       <div class="d-flex justify-content-between">
-                        <strong th:text="${addr.recipientName}">Tên</strong>
+                        <strong th:text="${addr.name}">Tên</strong>
                         <span th:if="${addr.isDefault}" class="badge bg-success">Mặc định</span>
                       </div>
                       <div class="text-muted small mt-1">
                         <i class="bi bi-geo-alt"></i> <span th:text="${addr.address}">Địa chỉ</span>
-                      </div>
-                      <div class="text-muted small">
-                        <i class="bi bi-telephone"></i> <span th:text="${addr.phoneNumber}">SĐT</span>
                       </div>
                     </label>
                   </div>
@@ -121,6 +119,39 @@
               </div>
             </div>
             
+            <!-- Promotion Selection -->
+            <div th:if="${cartsByShop != null and !cartsByShop.isEmpty()}" class="card mb-3">
+              <div class="card-header bg-warning text-dark">
+                <i class="bi bi-tag"></i> Chương trình khuyến mãi
+              </div>
+              <div class="card-body">
+                <div th:each="shopCart : ${cartsByShop}" class="mb-3">
+                  <h6 class="fw-bold">
+                    <i class="bi bi-shop"></i> <span th:text="${shopCart.shopName}">Shop name</span>
+                  </h6>
+                  <div th:if="${shopCart.promotions != null and !shopCart.promotions.isEmpty()}">
+                    <select class="form-select" name="promotionId">
+                      <option value="">-- Không áp dụng khuyến mãi --</option>
+                      <option th:each="promo : ${shopCart.promotions}" 
+                              th:value="${promo.id}"
+                              th:text="${promo.name + ' - Giảm ' + 
+                                       (promo.discountType.name() == 'PERCENTAGE' ? 
+                                        promo.discountValue + '%' : 
+                                        (#numbers.formatDecimal(promo.discountValue, 0, 'COMMA', 0, 'POINT') + '₫'))}">
+                        Promotion
+                      </option>
+                    </select>
+                    <small class="text-muted d-block mt-1">
+                      Chọn 1 chương trình khuyến mãi để áp dụng cho đơn hàng
+                    </small>
+                  </div>
+                  <div th:if="${shopCart.promotions == null or shopCart.promotions.isEmpty()}" class="text-muted">
+                    <i class="bi bi-info-circle"></i> Không có chương trình khuyến mãi
+                  </div>
+                </div>
+              </div>
+            </div>
+            
           </div>
           
           <!-- Right Column - Summary -->
@@ -133,7 +164,7 @@
                 <div class="d-flex justify-content-between mb-2">
                   <span>Tạm tính:</span>
                   <strong>
-                    <span class="price-format" th:text="${subtotal}">0</span> ₫
+                    <span class="price-format" th:text="${grandTotal}">0</span> ₫
                   </strong>
                 </div>
                 
@@ -147,7 +178,7 @@
                 <div class="d-flex justify-content-between mb-3">
                   <strong>Tổng cộng:</strong>
                   <strong class="text-danger fs-5">
-                    <span class="price-format" th:text="${subtotal}">0</span> ₫
+                    <span class="price-format" th:text="${grandTotal}">0</span> ₫
                   </strong>
                 </div>
                 
