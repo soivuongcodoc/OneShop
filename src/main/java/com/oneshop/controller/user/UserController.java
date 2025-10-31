@@ -17,13 +17,16 @@ import com.oneshop.entity.Order;
 import com.oneshop.entity.OrderStatus;
 import com.oneshop.entity.Product;
 import com.oneshop.entity.User;
+import com.oneshop.entity.Customer;
 import com.oneshop.repository.CartRepository;
 import com.oneshop.repository.OrderRepository;
 import com.oneshop.repository.ProductRepository;
 import com.oneshop.repository.ReviewRepository;
 import com.oneshop.repository.ViewedProductRepository;
 import com.oneshop.repository.WishlistRepository;
+import com.oneshop.repository.CustomerRepository;
 import com.oneshop.service.user.UserService;
+import com.oneshop.service.NotificationService;
 
 @Controller
 @RequestMapping("/user")
@@ -52,6 +55,12 @@ public class UserController {
 
     @Autowired
     private com.oneshop.repository.OrderDetailRepository orderDetailRepository;
+    
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     // 📊 Dashboard User - Trang tổng quan
     @GetMapping("/dashboard")
@@ -68,8 +77,6 @@ public class UserController {
         long totalOrders = allOrders.size();
         long pendingOrders = allOrders.stream().filter(o -> o.getStatus() == OrderStatus.PENDING).count();
         long confirmedOrders = allOrders.stream().filter(o -> o.getStatus() == OrderStatus.CONFIRMED).count();
-        long shippingOrders = allOrders.stream().filter(o -> o.getStatus() == OrderStatus.SHIPPING).count();
-        long deliveredOrders = allOrders.stream().filter(o -> o.getStatus() == OrderStatus.DELIVERED).count();
         long cancelledOrders = allOrders.stream().filter(o -> o.getStatus() == OrderStatus.CANCELLED).count();
 
         // Đếm sản phẩm yêu thích
@@ -82,8 +89,8 @@ public class UserController {
         var cart = cartRepository.findByUserId(userId);
         long cartItemsCount = cart.map(c -> c.getItems() != null ? c.getItems().size() : 0).orElse(0);
 
-        // Đơn hàng gần nhất
-        List<Order> recentOrders = allOrders.stream().limit(5).toList();
+        // Đơn hàng gần đây (5 đơn mới nhất)
+        var recentOrders = allOrders.stream().limit(5).toList();
 
         // Sản phẩm yêu thích gần nhất
         var recentWishlist = wishlistRepository.findByUserId(userId).stream().limit(4).toList();
@@ -95,8 +102,6 @@ public class UserController {
         model.addAttribute("totalOrders", totalOrders);
         model.addAttribute("pendingOrders", pendingOrders);
         model.addAttribute("confirmedOrders", confirmedOrders);
-        model.addAttribute("shippingOrders", shippingOrders);
-        model.addAttribute("deliveredOrders", deliveredOrders);
         model.addAttribute("cancelledOrders", cancelledOrders);
         model.addAttribute("wishlistCount", wishlistCount);
         model.addAttribute("viewedCount", viewedCount);
@@ -104,6 +109,11 @@ public class UserController {
         model.addAttribute("recentOrders", recentOrders);
         model.addAttribute("recentWishlist", recentWishlist);
         model.addAttribute("recentViewed", recentViewed);
+        
+        // Check if user has VENDOR role
+        boolean hasVendorRole = currentUser.getRoles().stream()
+                .anyMatch(role -> "VENDOR".equals(role.getName()));
+        model.addAttribute("hasVendorRole", hasVendorRole);
 
         return "user/dashboard";
     }
@@ -197,15 +207,15 @@ public class UserController {
         model.addAttribute("products", p.getContent());
         model.addAttribute("totalPages", p.getTotalPages());
         model.addAttribute("currentPage", page);
-        return "product";
+        return "user/product";
     }
 
     // 📄 Chi tiết sản phẩm
-    @GetMapping("product/{id}")
+    @GetMapping("/product/{id}")
     public String productDetail(@PathVariable("id") Long id, Model model) {
         var opt = productRepository.findById(id);
         if (opt.isEmpty()) {
-            return "redirect:/";
+            return "redirect:/user/products";
         }
 
         // Load reviews
@@ -213,131 +223,62 @@ public class UserController {
 
         model.addAttribute("product", opt.get());
         model.addAttribute("reviews", reviews);
-        return "product-detail";
+        return "user/product-detail";
     }
 
     @Autowired
     private com.oneshop.repository.AddressRepository addressRepository;
 
-    // 👤 Trang hồ sơ người dùng (user/profile.html)
+    // 👤 Trang thông tin tài khoản (hiển thị thông tin user + địa chỉ)
     @GetMapping("/profile")
     public String profile(Model model) {
         User u = userService.getCurrentUser();
         if (u == null) {
-            return "redirect:/auth/login";
+            return "redirect:/login";
         }
+        // Load Customer info
+        var customer = customerRepository.findByUserId(u.getId());
+        
         // Load danh sách địa chỉ
         var addresses = addressRepository.findByUserId(u.getId());
 
         model.addAttribute("user", u);
+        model.addAttribute("customer", customer.orElse(null));
         model.addAttribute("addresses", addresses);
         return "user/profile";
     }
 
-    // 📜 Lịch sử đơn hàng
-    @GetMapping("/orders")
-    public String orders(@RequestParam(value = "status", required = false) String status,
-            Model model) {
-        User current = userService.getCurrentUser();
-        if (current == null) {
-            return "redirect:/auth/login";
-        }
-
-        List<Order> ordersList;
-        if (status != null && !status.isBlank()) {
-            try {
-                var st = com.oneshop.entity.OrderStatus.valueOf(status);
-                ordersList = orderRepository.findByCustomer_User_IdAndStatusOrderByOrderDateDesc(current.getId(), st);
-                model.addAttribute("currentStatus", status);
-            } catch (IllegalArgumentException ex) {
-                ordersList = orderRepository.findByCustomer_User_IdOrderByOrderDateDesc(current.getId());
-            }
-        } else {
-            ordersList = orderRepository.findByCustomer_User_IdOrderByOrderDateDesc(current.getId());
-        }
-        model.addAttribute("orders", ordersList);
-
-        return "user/order_history";
-    }
-
-    // 📦 Chi tiết đơn hàng
-    @GetMapping("/order/{id}")
-    public String orderDetail(@PathVariable Long id,
-            @RequestParam(required = false) String cancelled,
-            Model model) {
-        User current = userService.getCurrentUser();
-        if (current == null) {
-            return "redirect:/auth/login";
-        }
-
-        // Tìm đơn hàng
-        Order order = orderRepository.findById(id).orElse(null);
-        if (order == null) {
-            return "redirect:/user/orders";
-        }
-
-        // Kiểm tra xem đơn hàng có thuộc về user hiện tại không
-        if (!order.getCustomer().getUser().getId().equals(current.getId())) {
-            return "redirect:/user/orders";
-        }
-
-        // Lấy danh sách sản phẩm trong đơn hàng
-        var orderDetails = orderDetailRepository.findByOrderId(id);
-
-        model.addAttribute("order", order);
-        model.addAttribute("orderDetails", orderDetails);
-
-        // Hiển thị thông báo hủy đơn thành công
-        if ("true".equals(cancelled) && order.getStatus() == OrderStatus.CANCELLED) {
-            model.addAttribute("successMessage", "Đơn hàng đã được hủy thành công!");
-        }
-
-        return "user/order_detail";
-    }
-
-    // ❌ Hủy đơn hàng
-    @PostMapping("/order/{id}/cancel")
-    public String cancelOrder(@PathVariable Long id, Model model) {
-        User current = userService.getCurrentUser();
-        if (current == null) {
-            return "redirect:/auth/login";
-        }
-
-        // Tìm đơn hàng
-        Order order = orderRepository.findById(id).orElse(null);
-        if (order == null) {
-            return "redirect:/user/orders";
-        }
-
-        // Kiểm tra xem đơn hàng có thuộc về user hiện tại không
-        if (!order.getCustomer().getUser().getId().equals(current.getId())) {
-            return "redirect:/user/orders";
-        }
-
-        // Chỉ cho phép hủy đơn hàng khi đang ở trạng thái PENDING
-        if (order.getStatus() == OrderStatus.PENDING) {
-            order.setStatus(OrderStatus.CANCELLED);
-            orderRepository.save(order);
-
-            model.addAttribute("successMessage", "Đơn hàng đã được hủy thành công!");
-        } else {
-            model.addAttribute("errorMessage", "Không thể hủy đơn hàng ở trạng thái hiện tại!");
-        }
-
-        // Redirect về trang chi tiết với thông báo
-        return "redirect:/user/order/" + id + "?cancelled=true";
-    }
-
     // ✏️ Cập nhật thông tin người dùng
     @PostMapping("/profile/update")
-    public String updateProfile(@RequestParam("email") String email) {
+    public String updateProfile(
+            @RequestParam("email") String email,
+            @RequestParam("fullName") String fullName,
+            @RequestParam("phone") String phone) {
         User current = userService.getCurrentUser();
         if (current == null) {
             return "redirect:/auth/login";
         }
 
+        // Update User email
         current.setEmail(email);
         userService.updateProfile(current);
+
+        // Update Customer fullName and phone
+        var customer = customerRepository.findByUserId(current.getId());
+        if (customer.isPresent()) {
+            Customer c = customer.get();
+            c.setFullName(fullName);
+            c.setPhone(phone);
+            customerRepository.save(c);
+        } else {
+            // Create new Customer if not exists
+            Customer newCustomer = Customer.builder()
+                    .user(current)
+                    .fullName(fullName)
+                    .phone(phone)
+                    .build();
+            customerRepository.save(newCustomer);
+        }
 
         return "redirect:/user/profile";
     }

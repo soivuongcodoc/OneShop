@@ -79,7 +79,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				System.out.println("🔥 JWT parse error: " + e.getMessage());
 			}
 		} else {
-			System.out.println("⚠️ Không có token trong request " + req.getRequestURI());
+			// Không log warning cho các trang public
+			// System.out.println("⚠️ Không có token trong request " + req.getRequestURI());
 		}
 
 		chain.doFilter(req, res);

@@ -30,10 +30,10 @@ public class ReviewController {
             return "redirect:/auth/login";
         }
         if (comment == null || comment.trim().length() < 50) {
-            return "redirect:/product/" + productId + "?error=comment_too_short";
+            return "redirect:/user/product/" + productId + "?error=comment_too_short";
         }
         if (!reviewService.userPurchasedProduct(current.getId(), productId)) {
-            return "redirect:/product/" + productId + "?error=not_purchased";
+            return "redirect:/user/product/" + productId + "?error=not_purchased";
         }
         String mediaUrl = null;
         if (media != null && !media.isEmpty()) {
@@ -56,6 +56,6 @@ public class ReviewController {
                 .mediaUrl(mediaUrl)
                 .build();
         reviewService.create(rv);
-        return "redirect:/product/" + productId + "?success=review_added";
+        return "redirect:/user/product/" + productId + "?success=review_added";
     }
 }

@@ -149,7 +149,7 @@
                           />
                           <div>
                             <a
-                              th:href="@{/product/{id}(id=${item.product.id})}"
+                              th:href="@{/user/product/{id}(id=${item.product.id})}"
                               class="text-decoration-none fw-bold"
                               th:text="${item.product.name}"
                               >Tên sản phẩm</a
@@ -261,20 +261,6 @@
                 >
                   <i class="bi bi-check-circle"></i>
                   <span>Đã xác nhận</span>
-                </div>
-                <div
-                  class="timeline-item"
-                  th:classappend="${order.status.name() == 'SHIPPING' or order.status.name() == 'DELIVERED' ? 'active' : ''}"
-                >
-                  <i class="bi bi-truck"></i>
-                  <span>Đang giao</span>
-                </div>
-                <div
-                  class="timeline-item"
-                  th:classappend="${order.status.name() == 'DELIVERED' ? 'active' : ''}"
-                >
-                  <i class="bi bi-box-seam"></i>
-                  <span>Đã giao</span>
                 </div>
               </div>
             </div>

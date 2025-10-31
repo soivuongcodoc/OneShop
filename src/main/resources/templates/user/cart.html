@@ -36,13 +36,125 @@
         </a>
       </div>
 
-      <div th:if="${#lists.isEmpty(cart)}">
+      <!-- Empty cart for not logged in users OR no items -->
+      <div th:if="${!isLoggedIn and (#lists.isEmpty(cart) or cart == null)}">
         <div class="alert alert-info">
-          Giỏ hàng trống. <a th:href="@{/products}">Tiếp tục mua sắm</a>
+          Giỏ hàng trống. <a th:href="@{/user/products}">Tiếp tục mua sắm</a>
+        </div>
+      </div>
+      
+      <!-- Empty cart for logged in users -->
+      <div th:if="${isLoggedIn and (#lists.isEmpty(cartsByShop) or cartsByShop == null)}">
+        <div class="alert alert-info">
+          Giỏ hàng trống. <a th:href="@{/user/products}">Tiếp tục mua sắm</a>
         </div>
       </div>
 
-      <div th:if="${!#lists.isEmpty(cart)}">
+      <!-- Cart grouped by shop (for logged in users) -->
+      <div th:if="${isLoggedIn and cartsByShop != null and !#lists.isEmpty(cartsByShop)}">
+        
+        <!-- Each shop section -->
+        <div th:each="shopCart : ${cartsByShop}" class="mb-4">
+          
+          <!-- Shop header -->
+          <div class="alert alert-primary mb-2 d-flex justify-content-between align-items-center">
+            <div>
+              <i class="fas fa-store me-2"></i>
+              <strong th:text="${shopCart.shopName}">Tên Shop</strong>
+            </div>
+            <span class="badge bg-primary">
+              <span th:text="${#lists.size(shopCart.items)}">0</span> sản phẩm
+            </span>
+          </div>
+          
+          <!-- Shop products table -->
+          <table class="table table-striped align-middle mb-3">
+            <thead class="table-light">
+              <tr>
+                <th>Sản phẩm</th>
+                <th class="text-center">Số lượng</th>
+                <th class="text-end">Giá (VNĐ)</th>
+                <th class="text-end">Thành tiền</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="item : ${shopCart.items}">
+                <td>
+                  <a
+                    th:href="@{/user/product/{id}(id=${item.product.id})}"
+                    th:text="${item.product.name}"
+                    class="text-decoration-none"
+                  >Product name</a>
+                </td>
+                <td class="text-center">
+                  <span class="badge bg-secondary" th:text="${item.quantity}">1</span>
+                </td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(item.product.price,0,'COMMA',0,'POINT')}">
+                  0
+                </td>
+                <td class="text-end fw-bold" th:text="${#numbers.formatDecimal(item.product.price * item.quantity,0,'COMMA',0,'POINT')}">
+                  0
+                </td>
+                <td class="text-end">
+                  <form
+                    th:action="@{/user/cart/remove/{id}(id=${item.product.id})}"
+                    method="post"
+                  >
+                    <button class="btn btn-sm btn-outline-danger" type="submit">
+                      Xóa
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot class="table-light">
+              <tr>
+                <td colspan="3" class="text-end"><strong>Tạm tính shop:</strong></td>
+                <td class="text-end fw-bold text-primary fs-5" th:text="${#numbers.formatDecimal(shopCart.subtotal,0,'COMMA',0,'POINT')} + ' VNĐ'">
+                  0 VNĐ
+                </td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+          
+          <!-- Checkout button for this shop -->
+          <div class="d-flex justify-content-end mb-3">
+            <a th:href="@{/user/checkout?shopId={id}(id=${shopCart.shopId})}" class="btn btn-primary btn-lg">
+              <i class="fas fa-credit-card me-2"></i>Thanh toán shop này
+            </a>
+          </div>
+          
+          <hr class="my-4" />
+          
+        </div>
+        
+        <!-- Grand total section -->
+        <div class="card bg-light">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <a th:href="@{/user/products}" class="btn btn-outline-secondary btn-lg w-100">
+                  <i class="fas fa-shopping-bag me-2"></i>Tiếp tục mua sắm
+                </a>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="fs-4">Tổng tất cả:</span>
+                  <strong class="text-danger fs-3" th:text="${#numbers.formatDecimal(grandTotal,0,'COMMA',0,'POINT')} + ' VNĐ'">
+                    0 VNĐ
+                  </strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      <!-- Old cart view for not logged in users (session cart) -->
+      <div th:if="${!isLoggedIn and cart != null and !#lists.isEmpty(cart)}">
         <table class="table table-striped align-middle">
           <thead>
             <tr>
@@ -56,22 +168,10 @@
           <tbody>
             <tr th:each="it : ${cart}">
               <td>
-                <div class="d-flex align-items-center">
-                  <img
-                    th:src="@{'/uploads/products/' + ${it.productId} + '.png'}"
-                    alt="img"
-                    onerror="this.src='/static/images/no-image.png'"
-                    style="width: 64px; height: 64px; object-fit: cover"
-                    class="me-3"
-                  />
-                  <div>
-                    <a
-                      th:href="@{/product/{id}(id=${it.productId})}"
-                      th:text="${it.name}"
-                      >Product name</a
-                    >
-                  </div>
-                </div>
+                <a
+                  th:href="@{/user/product/{id}(id=${it.productId})}"
+                  th:text="${it.name}"
+                  >Product name</a>
               </td>
               <td class="text-center" th:text="${it.quantity}">1</td>
               <td
@@ -90,7 +190,6 @@
                 <form
                   th:action="@{/user/cart/remove/{id}(id=${it.productId})}"
                   method="post"
-                  th:object="${it}"
                 >
                   <button class="btn btn-sm btn-outline-danger" type="submit">
                     Xóa
@@ -101,12 +200,10 @@
           </tbody>
           <tfoot>
             <tr>
-              <td></td>
-              <td></td>
-              <td class="text-end fw-bold">Tổng</td>
+              <td colspan="3" class="text-end fw-bold">Tổng</td>
               <td
                 class="text-end fw-bold"
-                th:text="${#numbers.formatDecimal(totalAmount,0,'COMMA',0,'POINT')} + ' VNĐ'"
+                th:text="${#numbers.formatDecimal(grandTotal,0,'COMMA',0,'POINT')} + ' VNĐ'"
               >
                 0 VNĐ
               </td>
@@ -116,7 +213,7 @@
         </table>
 
         <div class="d-flex justify-content-between">
-          <a th:href="@{/products}" class="btn btn-outline-secondary"
+          <a th:href="@{/user/products}" class="btn btn-outline-secondary"
             >Tiếp tục mua sắm</a
           >
           <a th:href="@{/user/checkout}" class="btn btn-primary">Thanh toán</a>

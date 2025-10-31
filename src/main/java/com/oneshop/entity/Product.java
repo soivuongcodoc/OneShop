@@ -67,10 +67,6 @@ public class Product {
     private Integer sold = 0;
 
     @Builder.Default
-    @Column(precision = 3, scale = 2)
-    private BigDecimal rating = BigDecimal.ZERO;
-
-    @Builder.Default
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 }

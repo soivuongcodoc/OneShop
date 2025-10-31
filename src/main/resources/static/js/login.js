@@ -40,15 +40,15 @@ document.addEventListener("DOMContentLoaded", () => {
       msgEl.textContent = "✅ Đăng nhập thành công! Đang chuyển hướng...";
 
 	  // ✅ Đợi 500ms cho cookie được ghi
-	  setTimeout(() => {
-	    const role = localStorage.getItem("role");
-	    let targetUrl = "/home";
-	    if (role === 'ROLE_ADMIN') targetUrl = '/admin/dashboard';
-      else if (role === 'ROLE_VENDOR') targetUrl = '/vendor/home';
-      else if (role === 'ROLE_USER') targetUrl = '/user/dashboard';
+    setTimeout(() => {
+      const role = localStorage.getItem("role");
+      let targetUrl = "/home";
+      if (role === 'ROLE_ADMIN') targetUrl = '/admin/dashboard';
+      else if (role === 'ROLE_VENDOR') targetUrl = '/vendor/dashboard';
+  else if (role === 'ROLE_USER') targetUrl = '/user/products';
 
-	    window.location.href = targetUrl;
-	  }, 1000);
+      window.location.href = targetUrl;
+    }, 1000);
 
     } catch (err) {
       console.error("LOGIN ERROR:", err);

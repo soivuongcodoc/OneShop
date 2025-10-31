@@ -108,22 +108,4 @@ public class PageController {
         return "product"; // templates/product.html
     }
 
-    /**
-     * Trang chi tiết sản phẩm cho Guest
-     */
-    @GetMapping("/product/{id}")
-    public String productDetailPage(@org.springframework.web.bind.annotation.PathVariable Long id, Model model) {
-        var product = productRepository.findById(id);
-        if (product.isEmpty()) {
-            return "redirect:/products";
-        }
-
-        // Load reviews
-        var reviews = reviewRepository.findByProductIdOrderByCreatedAtDesc(id);
-
-        model.addAttribute("product", product.get());
-        model.addAttribute("reviews", reviews);
-        return "product-detail"; // templates/product-detail.html
-    }
-
 }

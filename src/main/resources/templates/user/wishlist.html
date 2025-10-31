@@ -11,50 +11,112 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-      @media (max-width: 768px) {
-        .d-flex.justify-content-between {
-          flex-direction: column;
-          align-items: flex-start !important;
-        }
-        .d-flex.justify-content-between h3 {
-          margin-bottom: 1rem !important;
-        }
-        .d-flex.justify-content-between .btn {
-          width: 100%;
-        }
+      .product-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      }
+      .product-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        background: #f5f5f5;
+      }
+      .product-body {
+        padding: 15px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .product-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 2.8rem;
+      }
+      .product-price {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #e74c3c;
+        margin-bottom: 10px;
+      }
+      .btn-remove {
+        width: 100%;
+        margin-top: auto;
       }
     </style>
   </head>
   <body>
     <div class="container my-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="mb-0">Danh sách yêu thích</h3>
+        <h3 class="mb-0"><i class="bi bi-heart-fill text-danger"></i> Danh sách yêu thích</h3>
         <a href="/user/dashboard" class="btn btn-outline-primary">
-          <i class="fas fa-arrow-left me-2"></i>Quay lại Dashboard
+          <i class="bi bi-arrow-left me-2"></i>Quay lại Dashboard
         </a>
       </div>
-      <div class="row" th:if="${#lists.isEmpty(items)}">
-        <div class="col-12">Chưa có sản phẩm yêu thích.</div>
+
+      <!-- Empty state -->
+      <div th:if="${#lists.isEmpty(items)}" class="text-center py-5">
+        <i class="bi bi-heart" style="font-size: 4rem; color: #ccc;"></i>
+        <p class="mt-3 text-muted">Chưa có sản phẩm yêu thích nào.</p>
+        <a href="/user/products" class="btn btn-primary mt-2">
+          <i class="bi bi-bag-heart"></i> Khám phá sản phẩm
+        </a>
       </div>
-      <div class="row" th:each="w : ${items}">
-        <div class="col-md-8">
-          <a
-            th:href="@{'/product/' + ${w.product.id}}"
-            th:text="${w.product.name}"
-          ></a>
-        </div>
-        <div class="col-md-4 text-end">
-          <form
-            th:action="@{'/user/wishlist/remove/' + ${w.product.id}}"
-            method="post"
-          >
-            <button class="btn btn-sm btn-outline-danger">Bỏ thích</button>
-          </form>
+
+      <!-- Product grid -->
+      <div th:if="${!#lists.isEmpty(items)}" class="row row-cols-2 row-cols-md-4 g-3">
+        <div class="col" th:each="w : ${items}">
+          <div class="product-card">
+            <a th:href="@{'/user/product/' + ${w.product.id}}" class="text-decoration-none">
+              <img th:src="${w.product.imageUrl}" th:alt="${w.product.name}" class="product-img" />
+            </a>
+            <div class="product-body">
+              <a th:href="@{'/user/product/' + ${w.product.id}}" class="text-decoration-none">
+                <div class="product-name" th:text="${w.product.name}">Tên sản phẩm</div>
+              </a>
+              <div class="product-price" th:text="${#numbers.formatDecimal(w.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">
+                0₫
+              </div>
+              <form
+                th:action="@{'/user/wishlist/remove/' + ${w.product.id}}"
+                method="post"
+                class="mb-0"
+              >
+                <button class="btn btn-sm btn-outline-danger btn-remove">
+                  <i class="bi bi-heart-break"></i> Bỏ thích
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
-      <a class="btn btn-secondary mt-3" th:href="@{/}">Tiếp tục mua sắm</a>
-      <a class="btn btn-primary mt-3" th:href="@{/user/cart}">Xem giỏ hàng</a>
+
+      <!-- Action buttons -->
+      <div th:if="${!#lists.isEmpty(items)}" class="mt-4 d-flex gap-2">
+        <a class="btn btn-secondary" th:href="@{/user/products}">
+          <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
+        </a>
+        <a class="btn btn-primary" th:href="@{/user/cart}">
+          <i class="bi bi-cart3"></i> Xem giỏ hàng
+        </a>
+      </div>
     </div>
   </body>
 </html>

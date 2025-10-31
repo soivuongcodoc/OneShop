@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="user-header">
+  <header class="bg-dark text-white p-3 mb-4">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a th:href="@{/user/products}" class="text-white text-decoration-none h4 m-0">🛍 OneShop</a>
+      <nav class="d-flex align-items-center gap-3">
+        <a th:href="@{/user/wishlist}" class="text-white text-decoration-none">
+          <i class="bi bi-heart"></i> Wishlist
+        </a>
+        <a th:href="@{/user/cart}" class="text-white text-decoration-none">
+          <i class="bi bi-cart3"></i> Giỏ hàng
+        </a>
+        <a th:href="@{/notifications}" class="text-white text-decoration-none position-relative">
+          <i class="bi bi-bell fs-5"></i>
+          <span th:if="${unreadNotificationCount != null && unreadNotificationCount > 0}"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                th:text="${unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}">
+          </span>
+        </a>
+        <a th:href="@{/user/dashboard}" class="text-white text-decoration-none">
+          <i class="bi bi-person-circle"></i> Tài khoản
+        </a>
+        <a href="#" class="text-warning text-decoration-none" onclick="logout()">
+          <i class="bi bi-box-arrow-right"></i> Đăng xuất
+        </a>
+      </nav>
+    </div>
+  </header>
+</div>
+</body>
+</html>

@@ -35,9 +35,6 @@ public class User {
 //  private boolean emailVerified = false;
   private boolean enabled; // true sau khi verify email
 
-  @Column(name = "full_name", length = 150)
-
-  private String fullName;
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "user_roles",
           joinColumns = @JoinColumn(name = "user_id"),

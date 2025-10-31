@@ -26,4 +26,10 @@ public class DecoratorController {
         return "decorators/admin-layout";
     }
 
+    @GetMapping("/decorators/user-layout")
+    public String userLayoutDecorator() {
+        // Trả về view Thymeleaf: /templates/decorators/user-layout.html
+        return "decorators/user-layout";
+    }
+
 }

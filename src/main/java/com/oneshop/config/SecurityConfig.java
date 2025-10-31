@@ -34,29 +34,31 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-      http
+    http
           .csrf(csrf -> csrf.disable()) // REST API + JWT => disable CSRF
           .cors(cors -> cors.disable())
-          // .formLogin(form -> form.disable()) // Không dùng form login
-          // .httpBasic(basic -> basic.disable()) // Không dùng HTTP Basic
-          .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // stateless
+      .formLogin(form -> form.disable()) // Không dùng form login -> tránh redirect HTML
+      .httpBasic(basic -> basic.disable()) // Không dùng HTTP Basic
+          .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) // Cho phép session khi cần
           .authorizeHttpRequests(auth -> auth
           // ✅ Cho phép public các tài nguyên tĩnh và trang auth
 
                 .requestMatchers(
                     "/", "/index",
-                    "/css/**", "/js/**", "/images/**",
+                    "/css/**", "/js/**", "/images/**", "/uploads/**",
                     "/decorators/**", "/fragments/**",
                     "/auth/**",
                     "/login", "/register", "/verify", "/verify/**",
                     "/forgot-password", "/reset-password",
                     "/api/auth/**",
-                    "/favicon.ico","user/oder/**"
+                    "/favicon.ico",
+                    "/products", "/products/**"
                 ).permitAll()
 
+              .requestMatchers("/user/**").hasAnyRole("USER", "VENDOR", "ADMIN")
               .requestMatchers("/vendor/**").hasAnyRole("VENDOR", "ADMIN")
               .requestMatchers("/admin/**").hasRole("ADMIN")
-              .requestMatchers("/home").hasAnyRole("USER", "ADMIN","VENDOR")
+              .requestMatchers("/home").hasAnyRole("USER", "VENDOR", "ADMIN")
               .anyRequest().authenticated()
           ) 
           .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

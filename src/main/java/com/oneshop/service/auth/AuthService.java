@@ -12,6 +12,8 @@ import com.oneshop.entity.User;
 import com.oneshop.repository.OtpCodeRepository;
 import com.oneshop.repository.RoleRepository;
 import com.oneshop.repository.UserRepository;
+import com.oneshop.repository.CustomerRepository;
+import com.oneshop.entity.Customer;
 import com.oneshop.security.JwtTokenProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class AuthService {
   private final BCryptPasswordEncoder encoder;
   private final MailService mailService;
   private final JwtTokenProvider jwt;
+  private final CustomerRepository customerRepo;
 
   public void register(RegisterRequest req) {
     if (userRepo.existsByUsername(req.getUsername())) throw new RuntimeException("Username existed");
@@ -47,9 +50,15 @@ public class AuthService {
         .password(encoder.encode(req.getPassword()))
         .enabled(false)
         .roles(Set.of(userRole))
-        .fullName(req.getFullName())
         .build();
-    userRepo.save(user);
+  userRepo.save(user);
+
+  // Tạo Customer kèm fullName (do User không còn fullName)
+  String name = (req.getFullName() != null && !req.getFullName().isBlank()) ? req.getFullName() : user.getUsername();
+  customerRepo.save(Customer.builder()
+    .user(user)
+    .fullName(name)
+    .build());
 
     String code = genOtp();
     otpRepo.save(OtpCode.builder()
@@ -94,13 +103,14 @@ public class AuthService {
 	    if (!encoder.matches(req.getPassword(), u.getPassword()))
 	        throw new RuntimeException("Wrong credentials");
 
-	    String token = jwt.generateToken(u);
+      String token = jwt.generateToken(u);
 
-	    // ✅ Lấy role đầu tiên của user (nếu có nhiều role thì lấy role chính)
-	    String roleName = u.getRoles().stream()
-	            .findFirst()
-	            .map(role -> role.getName())
-	            .orElse("ROLE_USER");
+      // ✅ Lấy role đầu tiên của user (nếu có nhiều role thì lấy role chính)
+      String roleName = u.getRoles().stream()
+        .findFirst()
+        .map(role -> role.getName())
+        .map(name -> name.startsWith("ROLE_") ? name : "ROLE_" + name)
+        .orElse("ROLE_USER");
 
 	    // ✅ Trả về thêm role cho frontend
 	    return new JwtResponse(token, "Bearer", u.getUsername(), roleName);

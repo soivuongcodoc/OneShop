@@ -31,9 +31,6 @@ public class Address {
     @Column(nullable = false, length = 255)
     private String name; // Họ tên người nhận
 
-    @Column(nullable = false, length = 20)
-    private String phone;
-
     @Column(nullable = false, length = 500)
     private String address;
 

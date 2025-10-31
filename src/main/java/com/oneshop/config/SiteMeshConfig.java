@@ -21,10 +21,13 @@ public class SiteMeshConfig {
                         .addDecoratorPath("/vendor/*", "/decorators/vendor-layout")
                         // Admin pages dùng admin layout riêng
                         .addDecoratorPath("/admin/*", "/decorators/admin-layout")
+                        // User pages dùng user layout riêng
+                        .addDecoratorPath("/user/*", "/decorators/user-layout")
+                        // Trang products dùng user layout
+                        .addDecoratorPath("/products", "/decorators/user-layout")
                         // Các trang công khai dùng main layout
                         .addDecoratorPath("/login", "/decorators/main")
                         .addDecoratorPath("/register", "/decorators/main")
-                        // .addDecoratorPath("/test", "/decorators/main") // removed test page
                         .addDecoratorPath("/", "/decorators/main")
                         // tránh chính layout bị decor lần nữa
                         .addExcludedPath("/decorators/*")

@@ -1,8 +1,11 @@
 package com.oneshop.controller.user;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,12 +16,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.oneshop.dto.CartByShopDTO;
 import com.oneshop.dto.CartItem;
 import com.oneshop.entity.Cart;
 import com.oneshop.entity.CartItemEntity;
 import com.oneshop.entity.Product;
 import com.oneshop.repository.CartRepository;
 import com.oneshop.repository.ProductRepository;
+import com.oneshop.repository.ShopRepository;
 import com.oneshop.service.user.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -35,35 +40,70 @@ public class CartController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ShopRepository shopRepository;
 
     @GetMapping
     public String viewCart(HttpSession session, Model model) {
         var current = userService.getCurrentUser();
-        List<CartItem> items;
-        double totalAmount = 0;
+        List<CartByShopDTO> cartsByShop = new ArrayList<>();
+        double grandTotal = 0;
 
         if (current != null) {
             Cart cart = cartRepository.findByUserId(current.getId()).orElse(null);
-            items = new ArrayList<>();
-            if (cart != null && cart.getItems() != null) {
-                for (CartItemEntity it : cart.getItems()) {
-                    CartItem item = new CartItem(it.getProduct().getId(), it.getProduct().getName(), it.getQuantity(), it.getProduct().getPrice().doubleValue());
-                    items.add(item);
-                    totalAmount += item.getPrice() * item.getQuantity();
+            
+            if (cart != null && cart.getItems() != null && !cart.getItems().isEmpty()) {
+                // Group items by shopId
+                Map<Long, List<CartItemEntity>> itemsByShop = cart.getItems().stream()
+                    .filter(item -> item.getProduct() != null && item.getProduct().getShopId() != null)
+                    .collect(Collectors.groupingBy(item -> item.getProduct().getShopId()));
+                
+                // Create CartByShopDTO for each shop
+                for (Map.Entry<Long, List<CartItemEntity>> entry : itemsByShop.entrySet()) {
+                    Long shopId = entry.getKey();
+                    List<CartItemEntity> shopItems = entry.getValue();
+                    
+                    // Calculate subtotal for this shop
+                    BigDecimal shopSubtotal = BigDecimal.ZERO;
+                    for (CartItemEntity item : shopItems) {
+                        if (item.getProduct() != null) {
+                            BigDecimal itemTotal = item.getProduct().getPrice()
+                                .multiply(BigDecimal.valueOf(item.getQuantity()));
+                            shopSubtotal = shopSubtotal.add(itemTotal);
+                        }
+                    }
+                    
+                    // Get shop name
+                    String shopName = shopRepository.findById(shopId)
+                        .map(shop -> shop.getName())
+                        .orElse("Shop #" + shopId);
+                    
+                    CartByShopDTO shopCart = CartByShopDTO.builder()
+                        .shopId(shopId)
+                        .shopName(shopName)
+                        .items(shopItems)
+                        .subtotal(shopSubtotal)
+                        .build();
+                    
+                    cartsByShop.add(shopCart);
+                    grandTotal += shopSubtotal.doubleValue();
                 }
             }
         } else {
-            items = (List<CartItem>) session.getAttribute("CART");
-            if (items == null) {
-                items = new ArrayList<>();
+            // Session cart (not logged in) - simple list without shop grouping
+            List<CartItem> items = (List<CartItem>) session.getAttribute("CART");
+            if (items != null) {
+                for (CartItem item : items) {
+                    grandTotal += item.getPrice() * item.getQuantity();
+                }
             }
-            for (CartItem item : items) {
-                totalAmount += item.getPrice() * item.getQuantity();
-            }
+            model.addAttribute("cart", items != null ? items : new ArrayList<>());
         }
 
-        model.addAttribute("cart", items);
-        model.addAttribute("totalAmount", totalAmount);
+        model.addAttribute("cartsByShop", cartsByShop);
+        model.addAttribute("grandTotal", grandTotal);
+        model.addAttribute("isLoggedIn", current != null);
         return "user/cart";
     }
 

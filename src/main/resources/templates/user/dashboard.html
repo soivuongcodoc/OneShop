@@ -2,7 +2,7 @@
 <html
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sitemesh="http://www.opensymphony.com/sitemesh/decorator"
-  sitemesh:decorate="~{decorators/main}"
+  sitemesh:decorate="~{decorators/user-layout}"
 >
   <head>
     <meta charset="UTF-8" />
@@ -57,7 +57,7 @@
 
       <!-- Thống kê tổng quan -->
       <div class="row g-4 mb-4">
-        <div class="col-lg-3 col-md-6">
+        <div class="col-lg-4 col-md-6">
           <div class="card dashboard-card bg-primary text-white">
             <div class="card-body position-relative">
               <i class="bi bi-bag-check stat-icon"></i>
@@ -68,7 +68,7 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-3 col-md-6">
+        <div class="col-lg-4 col-md-6">
           <div class="card dashboard-card bg-warning text-white">
             <div class="card-body position-relative">
               <i class="bi bi-clock-history stat-icon"></i>
@@ -79,182 +79,145 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-3 col-md-6">
-          <div class="card dashboard-card bg-info text-white">
+        <div class="col-lg-4 col-md-6">
+          <div class="card dashboard-card bg-danger text-white">
             <div class="card-body position-relative">
-              <i class="bi bi-truck stat-icon"></i>
+              <i class="bi bi-x-circle stat-icon"></i>
               <h6 class="text-uppercase mb-1" style="font-size: 0.85rem">
-                Đang giao
+                Đã hủy
               </h6>
-              <h2 class="mb-0 fw-bold" th:text="${shippingOrders}">0</h2>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-          <div class="card dashboard-card bg-success text-white">
-            <div class="card-body position-relative">
-              <i class="bi bi-check-circle stat-icon"></i>
-              <h6 class="text-uppercase mb-1" style="font-size: 0.85rem">
-                Đã giao
-              </h6>
-              <h2 class="mb-0 fw-bold" th:text="${deliveredOrders}">0</h2>
+              <h2 class="mb-0 fw-bold" th:text="${cancelledOrders}">0</h2>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Liên kết nhanh -->
-      <h4 class="fw-bold mb-3">⚡ Truy cập nhanh</h4>
-      <div class="row g-3 mb-5">
-        <div class="col-lg-2 col-md-4 col-sm-6">
-          <a th:href="@{/products}" class="text-decoration-none">
-            <div class="card quick-link-card text-center p-3">
-              <i
-                class="bi bi-grid-3x3-gap text-primary"
-                style="font-size: 2rem"
-              ></i>
-              <p class="mb-0 mt-2 fw-semibold">Sản phẩm</p>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-2 col-md-4 col-sm-6">
-          <a th:href="@{/user/top20}" class="text-decoration-none">
-            <div class="card quick-link-card text-center p-3">
-              <i
-                class="bi bi-trophy-fill"
-                style="font-size: 2rem; color: #f59e0b"
-              ></i>
-              <p class="mb-0 mt-2 fw-semibold">Top 20</p>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-2 col-md-4 col-sm-6">
-          <a th:href="@{/user/cart}" class="text-decoration-none">
-            <div class="card quick-link-card text-center p-3">
-              <i class="bi bi-cart3 text-success" style="font-size: 2rem"></i>
-              <p class="mb-0 mt-2 fw-semibold">Giỏ hàng</p>
-              <span
-                class="badge bg-danger"
-                th:if="${cartItemsCount > 0}"
-                th:text="${cartItemsCount}"
-                >0</span
-              >
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-2 col-md-4 col-sm-6">
-          <a th:href="@{/user/orders}" class="text-decoration-none">
-            <div class="card quick-link-card text-center p-3">
-              <i class="bi bi-receipt text-warning" style="font-size: 2rem"></i>
-              <p class="mb-0 mt-2 fw-semibold">Đơn hàng</p>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-2 col-md-4 col-sm-6">
-          <a th:href="@{/user/wishlist}" class="text-decoration-none">
-            <div class="card quick-link-card text-center p-3">
-              <i class="bi bi-heart text-danger" style="font-size: 2rem"></i>
-              <p class="mb-0 mt-2 fw-semibold">Yêu thích</p>
-              <span
-                class="badge bg-danger"
-                th:if="${wishlistCount > 0}"
-                th:text="${wishlistCount}"
-                >0</span
-              >
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-2 col-md-4 col-sm-6">
-          <a th:href="@{/user/addresses}" class="text-decoration-none">
-            <div class="card quick-link-card text-center p-3">
-              <i class="bi bi-geo-alt text-info" style="font-size: 2rem"></i>
-              <p class="mb-0 mt-2 fw-semibold">Địa chỉ</p>
-            </div>
-          </a>
-        </div>
-        <div class="col-lg-2 col-md-4 col-sm-6">
-          <a th:href="@{/user/profile}" class="text-decoration-none">
-            <div class="card quick-link-card text-center p-3">
-              <i
-                class="bi bi-person-circle text-secondary"
-                style="font-size: 2rem"
-              ></i>
-              <p class="mb-0 mt-2 fw-semibold">Hồ sơ</p>
-            </div>
-          </a>
-        </div>
-      </div>
-
-      <!-- Đơn hàng gần đây & Sản phẩm -->
+      <!-- Shop của bạn & Sản phẩm -->
       <div class="row g-4">
+        
+        <!-- Shop của bạn Section -->
+        <div class="col-12">
+          <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+              <h5 class="mb-0 fw-bold text-white">
+                <i class="bi bi-shop"></i> Shop của bạn
+              </h5>
+            </div>
+            <div class="card-body">
+              <!-- Check if user has VENDOR role -->
+              <div th:if="${hasVendorRole}" class="text-center py-4">
+                <i class="bi bi-shop-window text-success" style="font-size: 4rem;"></i>
+                <h4 class="mt-3 fw-bold">Bạn đã có shop!</h4>
+                <p class="text-muted mb-4">Quản lý shop và sản phẩm của bạn</p>
+                <a th:href="@{/vendor/dashboard}" class="btn btn-primary btn-lg">
+                  <i class="bi bi-arrow-right-circle"></i> Đi tới trang quản lý shop
+                </a>
+              </div>
+              
+              <!-- No vendor role - Show register button -->
+              <div th:unless="${hasVendorRole}" class="text-center py-4">
+                <i class="bi bi-shop text-muted" style="font-size: 4rem;"></i>
+                <h4 class="mt-3 fw-bold">Bạn chưa có shop</h4>
+                <p class="text-muted mb-4">Đăng ký mở shop để bắt đầu bán hàng trên OneShop</p>
+                <a th:href="@{/user/shop-request}" class="btn btn-success btn-lg">
+                  <i class="bi bi-plus-circle"></i> Đăng ký mở shop
+                </a>
+                
+                <div class="mt-4">
+                  <div class="row g-3 text-start">
+                    <div class="col-md-4">
+                      <div class="d-flex align-items-start">
+                        <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                        <div>
+                          <strong>Miễn phí đăng ký</strong>
+                          <p class="small text-muted mb-0">Không mất phí đăng ký và duy trì shop</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="d-flex align-items-start">
+                        <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                        <div>
+                          <strong>Dễ dàng quản lý</strong>
+                          <p class="small text-muted mb-0">Công cụ quản lý đơn hàng và sản phẩm</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="d-flex align-items-start">
+                        <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+                        <div>
+                          <strong>Hỗ trợ 24/7</strong>
+                          <p class="small text-muted mb-0">Đội ngũ hỗ trợ nhiệt tình</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <!-- Đơn hàng gần đây -->
         <div class="col-lg-8">
-          <div class="card border-0 shadow-sm">
+          <div class="card border-0 shadow-sm mb-4">
             <div
               class="card-header bg-white border-bottom d-flex justify-content-between align-items-center"
             >
               <h5 class="mb-0 fw-bold">📦 Đơn hàng gần đây</h5>
-              <a
-                th:href="@{/user/orders}"
-                class="btn btn-sm btn-outline-primary"
-                >Xem tất cả</a
-              >
             </div>
-            <div class="card-body p-0">
-              <div class="table-responsive">
-                <table class="table table-hover mb-0">
+            <div class="card-body">
+              <div
+                th:if="${#lists.isEmpty(recentOrders)}"
+                class="text-center text-muted py-5"
+              >
+                <i class="bi bi-box-seam" style="font-size: 3rem"></i>
+                <p class="mb-0 mt-3">Bạn chưa có đơn hàng nào</p>
+              </div>
+              <div th:unless="${#lists.isEmpty(recentOrders)}" class="table-responsive">
+                <table class="table table-hover align-middle">
                   <thead class="table-light">
                     <tr>
-                      <th>Mã ĐH</th>
+                      <th>Mã đơn</th>
                       <th>Ngày đặt</th>
                       <th>Tổng tiền</th>
                       <th>Trạng thái</th>
-                      <th></th>
+                      <th>Hành động</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr th:each="order : ${recentOrders}">
-                      <td class="fw-semibold">
-                        #<span th:text="${order.id}">1</span>
+                      <td>
+                        <span class="badge bg-secondary" th:text="'#' + ${order.id}">
+                          #001
+                        </span>
+                      </td>
+                      <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy')}">
+                        01/01/2024
                       </td>
                       <td
-                        th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}"
-                      >
-                        01/01/2025
-                      </td>
-                      <td
-                        class="text-danger fw-bold"
+                        class="fw-bold text-danger"
                         th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + '₫'"
                       >
                         0₫
                       </td>
                       <td>
                         <span
-                          class="badge order-status-badge"
-                          th:classappend="${order.status.name() == 'PENDING'} ? 'bg-warning' : 
-                                                                  (${order.status.name() == 'CONFIRMED'} ? 'bg-info' : 
-                                                                  (${order.status.name() == 'SHIPPING'} ? 'bg-primary' : 
-                                                                  (${order.status.name() == 'DELIVERED'} ? 'bg-success' : 'bg-danger')))"
-                          th:text="${order.status.name() == 'PENDING'} ? 'Chờ xác nhận' : 
-                                                           (${order.status.name() == 'CONFIRMED'} ? 'Đã xác nhận' : 
-                                                           (${order.status.name() == 'SHIPPING'} ? 'Đang giao' : 
-                                                           (${order.status.name() == 'DELIVERED'} ? 'Đã giao' : 'Đã hủy')))"
+                          class="badge"
+                          th:classappend="${order.status.name() == 'PENDING'} ? 'bg-warning' : (${order.status.name() == 'CONFIRMED'} ? 'bg-info' : (${order.status.name() == 'SHIPPING'} ? 'bg-primary' : (${order.status.name() == 'DELIVERED'} ? 'bg-success' : 'bg-danger')))"
+                          th:text="${order.status.name() == 'PENDING'} ? 'Chờ xác nhận' : (${order.status.name() == 'CONFIRMED'} ? 'Đã xác nhận' : (${order.status.name() == 'SHIPPING'} ? 'Đang giao' : (${order.status.name() == 'DELIVERED'} ? 'Đã giao' : 'Đã hủy')))"
                         >
-                          Pending
+                          Đang xử lý
                         </span>
                       </td>
                       <td>
                         <a
-                          th:href="@{'/user/orders/' + ${order.id}}"
+                          th:href="@{/user/orders/{id}(id=${order.id})}"
                           class="btn btn-sm btn-outline-primary"
-                          >Chi tiết</a
                         >
-                      </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(recentOrders)}">
-                      <td colspan="5" class="text-center text-muted py-4">
-                        <i class="bi bi-inbox" style="font-size: 3rem"></i>
-                        <p class="mb-0 mt-2">Chưa có đơn hàng nào</p>
+                          <i class="bi bi-eye"></i> Chi tiết
+                        </a>
                       </td>
                     </tr>
                   </tbody>
@@ -263,8 +226,8 @@
             </div>
           </div>
         </div>
-
-        <!-- Sản phẩm yêu thích -->
+        
+        <!-- Sản phẩm yêu thích & Đã xem -->
         <div class="col-lg-4">
           <div class="card border-0 shadow-sm mb-4">
             <div

@@ -1,67 +1,198 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="utf-8" />
-    <title>Thanh toán</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="container my-4">
-      <h3>Thanh toán</h3>
-      <div th:if="${cart == null || #lists.isEmpty(cart.items)}">
-        Giỏ hàng trống.
-      </div>
-      <div th:if="${cart != null && !#lists.isEmpty(cart.items)}">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Sản phẩm</th>
-              <th>SL</th>
-              <th>Giá</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="it : ${cart.items}">
-              <td th:text="${it.product.name}"></td>
-              <td th:text="${it.quantity}"></td>
-              <td th:text="${it.product.price}"></td>
-            </tr>
-          </tbody>
-        </table>
-        <form th:action="@{/user/checkout}" method="post" class="row g-3">
-          <div class="col-12">
-            <label class="form-label">Địa chỉ giao hàng</label>
-            <input class="form-control" name="shippingAddress" required />
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Phương thức thanh toán</label>
-            <select class="form-select" name="payment" required>
-              <option
-                th:each="pm : ${paymentMethods}"
-                th:value="${pm.name}"
-                th:text="${pm.displayName}"
-              ></option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Mã giảm giá (nếu có)</label>
-            <input
-              class="form-control"
-              name="coupon"
-              placeholder="COUPON2025"
-            />
-          </div>
-          <div class="col-12 d-flex gap-2">
-            <button class="btn btn-primary">Đặt hàng</button>
-            <a class="btn btn-secondary" th:href="@{/user/cart}"
-              >Quay lại giỏ hàng</a
-            >
-          </div>
-        </form>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <title>Thanh toán - OneShop</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container my-5">
+    <h2 class="mb-4"><i class="bi bi-credit-card"></i> Thanh toán đơn hàng</h2>
+    
+    <!-- Empty Cart -->
+    <div th:if="${cart == null or cart.items == null or #lists.isEmpty(cart.items)}" class="text-center py-5">
+      <i class="bi bi-cart-x" style="font-size: 4rem; color: #ccc;"></i>
+      <h4 class="mt-3">Giỏ hàng trống</h4>
+      <a th:href="@{/user/products}" class="btn btn-primary mt-3">
+        <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
+      </a>
     </div>
-  </body>
+    
+    <!-- Checkout Form -->
+    <div th:if="${cart != null and cart.items != null and !#lists.isEmpty(cart.items)}">
+      <form th:action="@{/user/checkout}" method="post">
+        
+        <div class="row">
+          <!-- Left Column -->
+          <div class="col-md-8">
+            
+            <!-- Products Table -->
+            <div class="card mb-3">
+              <div class="card-header bg-primary text-white">
+                <i class="bi bi-cart-check"></i> Sản phẩm trong đơn hàng
+              </div>
+              <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Sản phẩm</th>
+                      <th class="text-center">Số lượng</th>
+                      <th class="text-end">Đơn giá</th>
+                      <th class="text-end">Thành tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="item : ${cart.items}">
+                      <td>
+                        <div class="fw-bold" th:text="${item.product.name}">Tên sản phẩm</div>
+                      </td>
+                      <td class="text-center">
+                        <span class="badge bg-secondary" th:text="${item.quantity}">1</span>
+                      </td>
+                      <td class="text-end">
+                        <span class="price-format" th:text="${item.product.price}">0</span> ₫
+                      </td>
+                      <td class="text-end">
+                        <strong class="text-danger">
+                          <span class="price-format" th:text="${item.product.price * item.quantity}">0</span> ₫
+                        </strong>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- Address -->
+            <div class="card mb-3">
+              <div class="card-header bg-success text-white">
+                <i class="bi bi-truck"></i> Địa chỉ giao hàng
+              </div>
+              <div class="card-body">
+                <div th:if="${addresses != null and !addresses.isEmpty()}" class="mb-3">
+                  <label class="form-label fw-bold">Chọn địa chỉ có sẵn:</label>
+                  <div th:each="addr : ${addresses}" class="form-check border rounded p-3 mb-2">
+                    <input class="form-check-input" type="radio" name="addressId" 
+                           th:id="'addr_' + ${addr.id}"
+                           th:value="${addr.id}"
+                           th:checked="${addr.isDefault}"
+                           onclick="clearNewAddress()" />
+                    <label class="form-check-label w-100" th:for="'addr_' + ${addr.id}">
+                      <div class="d-flex justify-content-between">
+                        <strong th:text="${addr.recipientName}">Tên</strong>
+                        <span th:if="${addr.isDefault}" class="badge bg-success">Mặc định</span>
+                      </div>
+                      <div class="text-muted small mt-1">
+                        <i class="bi bi-geo-alt"></i> <span th:text="${addr.address}">Địa chỉ</span>
+                      </div>
+                      <div class="text-muted small">
+                        <i class="bi bi-telephone"></i> <span th:text="${addr.phoneNumber}">SĐT</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+                
+                <div>
+                  <label class="form-label fw-bold">
+                    <span th:if="${addresses != null and !addresses.isEmpty()}">Hoặc nhập địa chỉ mới:</span>
+                    <span th:if="${addresses == null or addresses.isEmpty()}">Nhập địa chỉ giao hàng:</span>
+                  </label>
+                  <textarea id="newAddress" class="form-control" name="shippingAddress" rows="3" 
+                            placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố"
+                            onclick="clearAddressRadios()"></textarea>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Payment Method -->
+            <div class="card mb-3">
+              <div class="card-header bg-info text-white">
+                <i class="bi bi-wallet2"></i> Phương thức thanh toán
+              </div>
+              <div class="card-body">
+                <select class="form-select" name="payment" required>
+                  <option value="">-- Chọn phương thức thanh toán --</option>
+                  <option th:each="pm : ${paymentMethods}" 
+                          th:value="${pm.name}" 
+                          th:text="${pm.displayName}"
+                          th:selected="${pm.name == 'COD'}">COD</option>
+                </select>
+              </div>
+            </div>
+            
+          </div>
+          
+          <!-- Right Column - Summary -->
+          <div class="col-md-4">
+            <div class="card sticky-top" style="top: 20px;">
+              <div class="card-header bg-primary text-white">
+                <i class="bi bi-receipt"></i> Tóm tắt đơn hàng
+              </div>
+              <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Tạm tính:</span>
+                  <strong>
+                    <span class="price-format" th:text="${subtotal}">0</span> ₫
+                  </strong>
+                </div>
+                
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Phí vận chuyển:</span>
+                  <span class="text-success">Miễn phí</span>
+                </div>
+                
+                <hr/>
+                
+                <div class="d-flex justify-content-between mb-3">
+                  <strong>Tổng cộng:</strong>
+                  <strong class="text-danger fs-5">
+                    <span class="price-format" th:text="${subtotal}">0</span> ₫
+                  </strong>
+                </div>
+                
+                <button type="submit" class="btn btn-danger w-100 btn-lg">
+                  <i class="bi bi-check-circle"></i> Đặt hàng
+                </button>
+                
+                <a th:href="@{/user/cart}" class="btn btn-outline-secondary w-100 mt-2">
+                  <i class="bi bi-arrow-left"></i> Quay lại giỏ hàng
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    // Format numbers when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.price-format').forEach(el => {
+        const num = parseFloat(el.textContent.trim());
+        if (!isNaN(num)) {
+          el.textContent = formatNumber(num);
+        }
+      });
+    });
+    
+    function formatNumber(num) {
+      return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+    
+    function clearNewAddress() {
+      document.getElementById('newAddress').value = '';
+    }
+    
+    function clearAddressRadios() {
+      document.querySelectorAll('input[name="addressId"]').forEach(radio => {
+        radio.checked = false;
+      });
+    }
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

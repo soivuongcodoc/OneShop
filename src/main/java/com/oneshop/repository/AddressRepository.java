@@ -11,4 +11,6 @@ import com.oneshop.entity.Address;
 public interface AddressRepository extends JpaRepository<Address, Long> {
 
     List<Address> findByUserId(Long userId);
+
+    java.util.Optional<Address> findFirstByUserIdAndIsDefaultTrue(Long userId);
 }

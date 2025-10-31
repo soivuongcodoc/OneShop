@@ -30,9 +30,8 @@ public class AddressController {
 
     @PostMapping
     public String create(@RequestParam String name,
-            @RequestParam String phone,
-            @RequestParam String address,
-            @RequestParam(required = false, defaultValue = "false") Boolean isDefault) {
+                         @RequestParam String address,
+                         @RequestParam(required = false, defaultValue = "false") Boolean isDefault) {
         var current = userService.getCurrentUser();
         if (current == null) {
             return "redirect:/auth/login";
@@ -49,13 +48,12 @@ public class AddressController {
         Address a = Address.builder()
                 .userId(current.getId())
                 .name(name)
-                .phone(phone)
                 .address(address)
                 .active(true)
                 .isDefault(isDefault)
                 .build();
         addressRepository.save(a);
-        return "redirect:/user/profile";
+        return "redirect:/user/addresses";
     }
 
     @PostMapping("/{id}/delete")
@@ -69,7 +67,7 @@ public class AddressController {
                 addressRepository.delete(a);
             }
         });
-        return "redirect:/user/profile";
+        return "redirect:/user/addresses";
     }
 
     @PostMapping("/{id}/set-default")
@@ -93,6 +91,6 @@ public class AddressController {
             }
         });
 
-        return "redirect:/user/profile";
+        return "redirect:/user/addresses";
     }
 }

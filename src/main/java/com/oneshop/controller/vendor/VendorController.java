@@ -11,6 +11,7 @@ import com.oneshop.repository.OrderDetailRepository;
 import com.oneshop.repository.ProductRepository;
 import com.oneshop.repository.ReviewRepository;
 import com.oneshop.security.AuthFacade;
+import com.oneshop.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +42,7 @@ public class VendorController {
     private final ReviewRepository reviewRepo;
     private final CategoryRepository categoryRepo;
     private final AuthFacade auth;
+    private final NotificationService notificationService;
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
@@ -124,6 +126,10 @@ public class VendorController {
         if (order.getStatus() == OrderStatus.PENDING) {
             order.setStatus(OrderStatus.CONFIRMED);
             orderRepo.save(order);
+            
+            // Gửi thông báo cho user
+            Long userId = order.getCustomer().getUser().getId();
+            notificationService.createOrderConfirmedNotification(userId, order.getId(), "#" + order.getId());
         }
         return "redirect:/vendor/orders/" + id;
     }
@@ -136,6 +142,10 @@ public class VendorController {
         if (order.getStatus() != OrderStatus.CANCELLED) {
             order.setStatus(OrderStatus.CANCELLED);
             orderRepo.save(order);
+            
+            // Gửi thông báo cho user
+            Long userId = order.getCustomer().getUser().getId();
+            notificationService.createOrderCancelledNotification(userId, order.getId(), "#" + order.getId());
         }
         return "redirect:/vendor/orders/" + id;
     }
@@ -289,12 +299,7 @@ public class VendorController {
         return "redirect:/vendor/products";
     }
 
-    @GetMapping("/home")
-    public String vendorHome(Model model) {
-        model.addAttribute("pageTitle", "Vendor Home - OneShop");
-        model.addAttribute("activePage", "dashboard");
-        return "vendor/home";
-    }
+    // Removed vendor home, vendors should land on /vendor/dashboard after login
 
     @GetMapping("/products/{id}")
     public String productDetail(@PathVariable Long id, Model model) {

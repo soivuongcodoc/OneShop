@@ -39,7 +39,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findBySoldGreaterThanOrderBySoldDesc(int sold);
 
-    @Query("SELECT p FROM Product p ORDER BY p.rating DESC")
+    @Query("SELECT p FROM Product p ORDER BY p.sold DESC")
     Page<Product> findTopRated(Pageable pageable);
 
     // Sửa: lấy sản phẩm được yêu thích - đơn giản hóa bằng cách dùng sold thay vì wishlist
@@ -51,10 +51,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Method lấy top 20 yêu thích nhất (dùng native query)
     @Query(value = "SELECT TOP 20 p.* FROM products p "
-            + "LEFT JOIN wishlists w ON w.product_id = p.id "
-            + "GROUP BY p.id, p.shop_id, p.category_id, p.name, p.description, p.price, p.stock, "
-            + "p.image_url, p.active, p.featured, p.sold, p.rating, p.created_at "
-            + "ORDER BY COUNT(w.id) DESC",
+        + "LEFT JOIN wishlists w ON w.product_id = p.id "
+        + "GROUP BY p.id, p.shop_id, p.category_id, p.name, p.description, p.price, p.stock, "
+        + "p.image_url, p.active, p.featured, p.sold, p.created_at "
+        + "ORDER BY COUNT(w.id) DESC",
             nativeQuery = true)
     List<Product> findTop20MostFavorited();
 }

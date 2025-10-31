@@ -2,21 +2,50 @@
 -- ONESHOP - DỮ LIỆU MẪU CHO SHOP MỸ PHẨM
 -- ============================================
 
+-- XÓA DỮ LIỆU CŨ (nếu có) - theo thứ tự foreign key (con → cha)
+DELETE FROM notifications;
+DELETE FROM order_details;
+DELETE FROM orders;
+DELETE FROM reviews;
+DELETE FROM cart_items;
+DELETE FROM carts;
+DELETE FROM wishlists;
+DELETE FROM viewed_products;
+DELETE FROM addresses;
+DELETE FROM customers;
+DELETE FROM user_roles;
+DELETE FROM products;
+DELETE FROM promotions;
+DELETE FROM shop_requests;
+DELETE FROM shops;
+DELETE FROM categories;
+DELETE FROM coupons;
+DELETE FROM payment_methods;
+DELETE FROM users;
+DELETE FROM roles;
+
+-- 1. ROLES
+SET IDENTITY_INSERT roles ON;
+INSERT INTO roles (id, name) VALUES
+(1, 'USER'),
+(2, 'VENDOR'),
+(3, 'ADMIN');
+SET IDENTITY_INSERT roles OFF;
 
 -- 2. USERS (Password: 123456)
 SET IDENTITY_INSERT users ON;
-INSERT INTO users (id, username, email, password, full_name, enabled) VALUES
+INSERT INTO users (id, username, email, password, enabled) VALUES
 -- Admin
-(1, 'admin', 'admin@oneshop.vn', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Quản trị viên', 1),
+(1, 'admin', 'admin@oneshop.vn', '$2a$10$CvfkJ/NZ/jTg3au1tVTh4ea3wZthFinF5tU62Ji48.qL4EgQeJLny', 1),
 -- Vendors (Shop owners)
-(2, 'beautyworld', 'beautyworld@gmail.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Beauty World Shop', 1),
-(3, 'natureglow', 'natureglow@gmail.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Nature Glow Store', 1),
-(4, 'skincarevn', 'skincare@gmail.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Skincare VN', 1),
+(2, 'beautyworld', 'beautyworld@gmail.com', '$2a$10$CvfkJ/NZ/jTg3au1tVTh4ea3wZthFinF5tU62Ji48.qL4EgQeJLny', 1),
+(3, 'natureglow', 'natureglow@gmail.com', '$2a$10$CvfkJ/NZ/jTg3au1tVTh4ea3wZthFinF5tU62Ji48.qL4EgQeJLny', 1),
+(4, 'skincarevn', 'skincare@gmail.com', '$2a$10$CvfkJ/NZ/jTg3au1tVTh4ea3wZthFinF5tU62Ji48.qL4EgQeJLny', 1),
 -- Regular users
-(5, 'nguyenvana', 'nguyenvana@gmail.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Nguyễn Văn A', 1),
-(6, 'tranthib', 'tranthib@gmail.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Trần Thị B', 1),
-(7, 'lethic', 'lethic@gmail.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Lê Thị C', 1),
-(8, 'phamvand', 'phamvand@gmail.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', N'Phạm Văn D', 1);
+(5, 'nguyenvana', 'nguyenvana@gmail.com', '$2a$10$CvfkJ/NZ/jTg3au1tVTh4ea3wZthFinF5tU62Ji48.qL4EgQeJLny', 1),
+(6, 'tranthib', 'tranthib@gmail.com', '$2a$10$CvfkJ/NZ/jTg3au1tVTh4ea3wZthFinF5tU62Ji48.qL4EgQeJLny', 1),
+(7, 'lethic', 'lethic@gmail.com', '$2a$10$CvfkJ/NZ/jTg3au1tVTh4ea3wZthFinF5tU62Ji48.qL4EgQeJLny', 1),
+(8, 'phamvand', 'phamvand@gmail.com', '$2a$10$CvfkJ/NZ/jTg3au1tVTh4ea3wZthFinF5tU62Ji48.qL4EgQeJLny', 1);
 SET IDENTITY_INSERT users OFF;
 
 -- 3. USER_ROLES
@@ -49,36 +78,36 @@ SET IDENTITY_INSERT categories OFF;
 
 -- 6. PRODUCTS (Sản phẩm mỹ phẩm với sold > 10)
 SET IDENTITY_INSERT products ON;
-INSERT INTO products (id, shop_id, category_id, name, description, price, stock, image_url, active, featured, sold, rating, created_at) VALUES
+INSERT INTO products (id, shop_id, category_id, name, description, price, stock, image_url, active, featured, sold, created_at) VALUES
 -- Beauty World Shop
-(1, 2, 1, N'Sữa Rửa Mặt CeraVe Foaming Cleanser 236ml', N'Sữa rửa mặt dạng gel tạo bọt dịu nhẹ dành cho da thường đến da dầu. Chứa 3 ceramides thiết yếu giúp làm sạch sâu, loại bỏ dầu thừa mà không làm khô da. Công nghệ MVE giúp duy trì độ ẩm suốt 24 giờ.', 285000, 150, '/uploads/products/cerave-cleanser.jpg', 1, 1, 156, 4.8, DATEADD(day, -60, GETDATE())),
-(2, 2, 1, N'Kem Dưỡng La Roche-Posay Effaclar Duo+ 40ml', N'Kem dưỡng trị mụn từ thương hiệu dược mỹ phẩm Pháp. Giúp giảm mụn, mờ thâm, kiểm soát dầu hiệu quả. Phù hợp cho da nhạy cảm, da mụn.', 450000, 120, '/uploads/products/lrp-effaclar.jpg', 1, 1, 234, 4.9, DATEADD(day, -55, GETDATE())),
-(3, 2, 2, N'Son Kem Lì 3CE Velvet Lip Tint', N'Son kem lì lâu trôi với màu sắc trendy, kết cấu mềm mượt. Bám màu tốt, không gây khô môi. Thiết kế đầu cọ nhỏ giúp tô môi dễ dàng.', 320000, 200, '/uploads/products/3ce-liptint.jpg', 1, 1, 189, 4.7, DATEADD(day, -50, GETDATE())),
-(4, 2, 1, N'Serum Vitamin C The Ordinary 30ml', N'Serum Vitamin C 23% kết hợp HA Spheres 2% giúp làm sáng da, mờ thâm nám, chống lão hóa. Thích hợp cho da thiếu sức sống, da bị xỉn màu.', 180000, 180, '/uploads/products/to-vitaminc.jpg', 1, 0, 298, 4.6, DATEADD(day, -45, GETDATE())),
-(5, 2, 2, N'Phấn Nền Maybelline Fit Me Matte 30ml', N'Phấn nền dạng lỏng với độ che phủ vừa phải, lớp finish mịn lì tự nhiên. Kiểm soát dầu tốt, không gây mụn. 12 tông màu đa dạng.', 199000, 250, '/uploads/products/maybelline-fitme.jpg', 1, 1, 312, 4.5, DATEADD(day, -40, GETDATE())),
+(1, 2, 1, N'Sữa Rửa Mặt CeraVe Foaming Cleanser 236ml', N'Sữa rửa mặt dạng gel tạo bọt dịu nhẹ dành cho da thường đến da dầu. Chứa 3 ceramides thiết yếu giúp làm sạch sâu, loại bỏ dầu thừa mà không làm khô da. Công nghệ MVE giúp duy trì độ ẩm suốt 24 giờ.', 285000, 150, '/uploads/products/cerave-cleanser.jpg', 1, 1, 156, DATEADD(day, -60, GETDATE())),
+(2, 2, 1, N'Kem Dưỡng La Roche-Posay Effaclar Duo+ 40ml', N'Kem dưỡng trị mụn từ thương hiệu dược mỹ phẩm Pháp. Giúp giảm mụn, mờ thâm, kiểm soát dầu hiệu quả. Phù hợp cho da nhạy cảm, da mụn.', 450000, 120, '/uploads/products/lrp-effaclar.jpg', 1, 1, 234, DATEADD(day, -55, GETDATE())),
+(3, 2, 2, N'Son Kem Lì 3CE Velvet Lip Tint', N'Son kem lì lâu trôi với màu sắc trendy, kết cấu mềm mượt. Bám màu tốt, không gây khô môi. Thiết kế đầu cọ nhỏ giúp tô môi dễ dàng.', 320000, 200, '/uploads/products/3ce-liptint.jpg', 1, 1, 189, DATEADD(day, -50, GETDATE())),
+(4, 2, 1, N'Serum Vitamin C The Ordinary 30ml', N'Serum Vitamin C 23% kết hợp HA Spheres 2% giúp làm sáng da, mờ thâm nám, chống lão hóa. Thích hợp cho da thiếu sức sống, da bị xỉn màu.', 180000, 180, '/uploads/products/to-vitaminc.jpg', 1, 0, 298, DATEADD(day, -45, GETDATE())),
+(5, 2, 2, N'Phấn Nền Maybelline Fit Me Matte 30ml', N'Phấn nền dạng lỏng với độ che phủ vừa phải, lớp finish mịn lì tự nhiên. Kiểm soát dầu tốt, không gây mụn. 12 tông màu đa dạng.', 199000, 250, '/uploads/products/maybelline-fitme.jpg', 1, 1, 312, DATEADD(day, -40, GETDATE())),
 
 -- Nature Glow Shop
-(6, 3, 1, N'Sữa Rửa Mặt Innisfree Green Tea 150ml', N'Sữa rửa mặt chiết xuất từ trà xanh hữu cơ Jeju. Làm sạch nhẹ nhàng, cấp ẩm và cân bằng độ pH cho da. An toàn cho da nhạy cảm.', 165000, 300, '/uploads/products/innisfree-cleanser.jpg', 1, 1, 267, 4.7, DATEADD(day, -58, GETDATE())),
-(7, 3, 6, N'Mặt Nạ Giấy Some By Mi Tea Tree 10 Miếng', N'Mặt nạ giấy chiết xuất tràm trà giúp làm dịu da, kháng khuẩn, giảm mụn hiệu quả. Phù hợp cho da dầu mụn.', 89000, 500, '/uploads/products/somebymi-mask.jpg', 1, 1, 445, 4.8, DATEADD(day, -52, GETDATE())),
-(8, 3, 1, N'Nước Hoa Hồng Klairs Supple Preparation 180ml', N'Toner không mùi, không cồn với 10 loại thảo mộc thiên nhiên. Cân bằng độ pH, cấp ẩm sâu, chuẩn bị da cho các bước dưỡng tiếp theo.', 380000, 150, '/uploads/products/klairs-toner.jpg', 1, 0, 178, 4.9, DATEADD(day, -48, GETDATE())),
-(9, 3, 3, N'Sữa Tắm L''Occitane Almond Shower Oil 250ml', N'Dầu tắm chiết xuất hạnh nhân ngọt, dưỡng ẩm vượt trội. Hương thơm sang trọng, da mềm mịn sau khi tắm.', 520000, 80, '/uploads/products/loccitane-shower.jpg', 1, 1, 92, 4.9, DATEADD(day, -44, GETDATE())),
-(10, 3, 4, N'Dầu Gội Aromatica Rosemary 400ml', N'Dầu gội hữu cơ với tinh dầu hương thảo giúp kích thích mọc tóc, giảm rụng tóc. Làm sạch da đầu, tóc khỏe mạnh từ gốc.', 420000, 100, '/uploads/products/aromatica-shampoo.jpg', 1, 0, 134, 4.6, DATEADD(day, -42, GETDATE())),
+(6, 3, 1, N'Sữa Rửa Mặt Innisfree Green Tea 150ml', N'Sữa rửa mặt chiết xuất từ trà xanh hữu cơ Jeju. Làm sạch nhẹ nhàng, cấp ẩm và cân bằng độ pH cho da. An toàn cho da nhạy cảm.', 165000, 300, '/uploads/products/innisfree-cleanser.jpg', 1, 1, 267, DATEADD(day, -58, GETDATE())),
+(7, 3, 6, N'Mặt Nạ Giấy Some By Mi Tea Tree 10 Miếng', N'Mặt nạ giấy chiết xuất tràm trà giúp làm dịu da, kháng khuẩn, giảm mụn hiệu quả. Phù hợp cho da dầu mụn.', 89000, 500, '/uploads/products/somebymi-mask.jpg', 1, 1, 445, DATEADD(day, -52, GETDATE())),
+(8, 3, 1, N'Nước Hoa Hồng Klairs Supple Preparation 180ml', N'Toner không mùi, không cồn với 10 loại thảo mộc thiên nhiên. Cân bằng độ pH, cấp ẩm sâu, chuẩn bị da cho các bước dưỡng tiếp theo.', 380000, 150, '/uploads/products/klairs-toner.jpg', 1, 0, 178, DATEADD(day, -48, GETDATE())),
+(9, 3, 3, N'Sữa Tắm L''Occitane Almond Shower Oil 250ml', N'Dầu tắm chiết xuất hạnh nhân ngọt, dưỡng ẩm vượt trội. Hương thơm sang trọng, da mềm mịn sau khi tắm.', 520000, 80, '/uploads/products/loccitane-shower.jpg', 1, 1, 92, DATEADD(day, -44, GETDATE())),
+(10, 3, 4, N'Dầu Gội Aromatica Rosemary 400ml', N'Dầu gội hữu cơ với tinh dầu hương thảo giúp kích thích mọc tóc, giảm rụng tóc. Làm sạch da đầu, tóc khỏe mạnh từ gốc.', 420000, 100, '/uploads/products/aromatica-shampoo.jpg', 1, 0, 134, DATEADD(day, -42, GETDATE())),
 
 -- Skincare VN Shop
-(11, 4, 1, N'Kem Trị Mụn Acnes Spot Care 9g', N'Kem bôi trị mụn tại chỗ với BHA và Sulfur. Giúp giảm sưng, kháng khuẩn, làm khô mụn nhanh chóng trong 3-5 ngày.', 65000, 400, '/uploads/products/acnes-spot.jpg', 1, 0, 523, 4.4, DATEADD(day, -65, GETDATE())),
-(12, 4, 1, N'Serum Trị Nám Vichy Mineral 89 50ml', N'Serum khoáng cô đặc 89% với Hyaluronic Acid giúp phục hồi, tăng cường hàng rào bảo vệ da. Làm mờ nám, sáng da an toàn.', 680000, 90, '/uploads/products/vichy-serum.jpg', 1, 1, 167, 4.8, DATEADD(day, -38, GETDATE())),
-(13, 4, 1, N'Kem Chống Nắng Bioré UV Aqua Rich 50g', N'Kem chống nắng dạng gel nước nhẹ bóng, thấm nhanh. SPF 50+ PA++++ bảo vệ da khỏi tia UV. Kháng nước, mồ hôi.', 180000, 350, '/uploads/products/biore-uv.jpg', 1, 1, 421, 4.7, DATEADD(day, -35, GETDATE())),
-(14, 4, 6, N'Mặt Nạ Ngủ Laneige Water Sleeping Mask 70ml', N'Mặt nạ ngủ cấp ẩm chuyên sâu với công nghệ Hydro Ionized Mineral Water. Da sáng mịn, căng bóng sau một đêm.', 520000, 110, '/uploads/products/laneige-mask.jpg', 1, 1, 203, 4.9, DATEADD(day, -32, GETDATE())),
-(15, 4, 1, N'Tinh Chất AHA/BHA Cosrx 100ml', N'Tinh chất tẩy da chết hóa học với AHA, BHA và 10% Willow Bark Water. Làm sạch lỗ chân lông, giảm mụn đầu đen, mịn da.', 320000, 140, '/uploads/products/cosrx-aha.jpg', 1, 0, 256, 4.6, DATEADD(day, -30, GETDATE())),
+(11, 4, 1, N'Kem Trị Mụn Acnes Spot Care 9g', N'Kem bôi trị mụn tại chỗ với BHA và Sulfur. Giúp giảm sưng, kháng khuẩn, làm khô mụn nhanh chóng trong 3-5 ngày.', 65000, 400, '/uploads/products/acnes-spot.jpg', 1, 0, 523, DATEADD(day, -65, GETDATE())),
+(12, 4, 1, N'Serum Trị Nám Vichy Mineral 89 50ml', N'Serum khoáng cô đặc 89% với Hyaluronic Acid giúp phục hồi, tăng cường hàng rào bảo vệ da. Làm mờ nám, sáng da an toàn.', 680000, 90, '/uploads/products/vichy-serum.jpg', 1, 1, 167, DATEADD(day, -38, GETDATE())),
+(13, 4, 1, N'Kem Chống Nắng Bioré UV Aqua Rich 50g', N'Kem chống nắng dạng gel nước nhẹ bóng, thấm nhanh. SPF 50+ PA++++ bảo vệ da khỏi tia UV. Kháng nước, mồ hôi.', 180000, 350, '/uploads/products/biore-uv.jpg', 1, 1, 421, DATEADD(day, -35, GETDATE())),
+(14, 4, 6, N'Mặt Nạ Ngủ Laneige Water Sleeping Mask 70ml', N'Mặt nạ ngủ cấp ẩm chuyên sâu với công nghệ Hydro Ionized Mineral Water. Da sáng mịn, căng bóng sau một đêm.', 520000, 110, '/uploads/products/laneige-mask.jpg', 1, 1, 203, DATEADD(day, -32, GETDATE())),
+(15, 4, 1, N'Tinh Chất AHA/BHA Cosrx 100ml', N'Tinh chất tẩy da chết hóa học với AHA, BHA và 10% Willow Bark Water. Làm sạch lỗ chân lông, giảm mụn đầu đen, mịn da.', 320000, 140, '/uploads/products/cosrx-aha.jpg', 1, 0, 256, DATEADD(day, -30, GETDATE())),
 
 -- Thêm sản phẩm nước hoa
-(16, 2, 5, N'Nước Hoa Chanel Coco Mademoiselle 50ml', N'Hương thơm quyến rũ, sang trọng với note hoa hồng, vani và patchouli. Lưu hương 8-10 giờ. Phù hợp cho phái nữ thanh lịch.', 2850000, 45, '/uploads/products/chanel-coco.jpg', 1, 1, 78, 5.0, DATEADD(day, -28, GETDATE())),
-(17, 2, 5, N'Nước Hoa Dior Sauvage EDT 60ml', N'Hương thơm nam tính mạnh mẽ với note ớt hồng, bergamot và hổ phách. Lưu hương lâu, phù hợp cho nam giới năng động.', 2650000, 60, '/uploads/products/dior-sauvage.jpg', 1, 1, 95, 4.9, DATEADD(day, -26, GETDATE())),
+(16, 2, 5, N'Nước Hoa Chanel Coco Mademoiselle 50ml', N'Hương thơm quyến rũ, sang trọng với note hoa hồng, vani và patchouli. Lưu hương 8-10 giờ. Phù hợp cho phái nữ thanh lịch.', 2850000, 45, '/uploads/products/chanel-coco.jpg', 1, 1, 78, DATEADD(day, -28, GETDATE())),
+(17, 2, 5, N'Nước Hoa Dior Sauvage EDT 60ml', N'Hương thơm nam tính mạnh mẽ với note ớt hồng, bergamot và hổ phách. Lưu hương lâu, phù hợp cho nam giới năng động.', 2650000, 60, '/uploads/products/dior-sauvage.jpg', 1, 1, 95, DATEADD(day, -26, GETDATE())),
 
 -- Sản phẩm mới ra
-(18, 3, 1, N'Kem Dưỡng Ẩm Neutrogena Hydro Boost 50ml', N'Kem dưỡng ẩm dạng gel với Hyaluronic Acid giúp cấp ẩm tức thì. Kết cấu nhẹ, thấm nhanh, không gây nhờn.', 299000, 200, '/uploads/products/neutrogena-hydro.jpg', 1, 1, 15, 4.5, DATEADD(day, -5, GETDATE())),
-(19, 4, 2, N'Mascara Maybelline Lash Sensational Sky High', N'Mascara làm dài và cong mi với công thức Bamboo Extract. Không lem, không vón cục. Giữ nếp tốt cả ngày.', 249000, 180, '/uploads/products/maybelline-mascara.jpg', 1, 0, 32, 4.6, DATEADD(day, -3, GETDATE())),
-(20, 3, 1, N'Kem Dưỡng Trắng Da Innisfree Jeju Cherry Blossom 50ml', N'Kem dưỡng trắng da chiết xuất hoa anh đào Jeju. Làm sáng, mờ thâm, cải thiện tông màu da đều màu tự nhiên.', 385000, 150, '/uploads/products/innisfree-cherry.jpg', 1, 0, 23, 4.7, DATEADD(day, -2, GETDATE()));
+(18, 3, 1, N'Kem Dưỡng Ẩm Neutrogena Hydro Boost 50ml', N'Kem dưỡng ẩm dạng gel với Hyaluronic Acid giúp cấp ẩm tức thì. Kết cấu nhẹ, thấm nhanh, không gây nhờn.', 299000, 200, '/uploads/products/neutrogena-hydro.jpg', 1, 1, 15, DATEADD(day, -5, GETDATE())),
+(19, 4, 2, N'Mascara Maybelline Lash Sensational Sky High', N'Mascara làm dài và cong mi với công thức Bamboo Extract. Không lem, không vón cục. Giữ nếp tốt cả ngày.', 249000, 180, '/uploads/products/maybelline-mascara.jpg', 1, 0, 32, DATEADD(day, -3, GETDATE())),
+(20, 3, 1, N'Kem Dưỡng Trắng Da Innisfree Jeju Cherry Blossom 50ml', N'Kem dưỡng trắng da chiết xuất hoa anh đào Jeju. Làm sáng, mờ thâm, cải thiện tông màu da đều màu tự nhiên.', 385000, 150, '/uploads/products/innisfree-cherry.jpg', 1, 0, 23, DATEADD(day, -2, GETDATE()));
 SET IDENTITY_INSERT products OFF;
 
 -- 7. PAYMENT METHODS
@@ -100,34 +129,33 @@ SET IDENTITY_INSERT coupons OFF;
 
 -- 9. CUSTOMERS
 SET IDENTITY_INSERT customers ON;
-INSERT INTO customers (id, user_id, full_name, phone, address, ward, district, city) VALUES
-(1, 5, N'Nguyễn Văn A', '0901111111', N'123 Lê Văn Việt', N'Phường Hiệp Phú', N'Quận 9', N'TP. Hồ Chí Minh'),
-(2, 6, N'Trần Thị B', '0902222222', N'456 Võ Văn Ngân', N'Phường Linh Chiểu', N'Thủ Đức', N'TP. Hồ Chí Minh'),
-(3, 7, N'Lê Thị C', '0903333333', N'789 Nguyễn Thái Sơn', N'Phường 4', N'Gò Vấp', N'TP. Hồ Chí Minh'),
-(4, 8, N'Phạm Văn D', '0904444444', N'321 Cách Mạng Tháng 8', N'Phường 7', N'Quận 3', N'TP. Hồ Chí Minh');
+INSERT INTO customers (id, user_id, full_name, phone) VALUES
+(1, 5, N'Nguyễn Văn A', '0901111111'),
+(2, 6, N'Trần Thị B', '0902222222'),
+(3, 7, N'Lê Thị C', '0903333333'),
+(4, 8, N'Phạm Văn D', '0904444444');
 SET IDENTITY_INSERT customers OFF;
 
 -- 10. ADDRESSES (Địa chỉ giao hàng)
 SET IDENTITY_INSERT addresses ON;
-INSERT INTO addresses (id, user_id, name, phone, address, active, is_default) VALUES
-(1, 5, N'Nhà riêng', '0901111111', N'123 Lê Văn Việt, P.Hiệp Phú, Q.9, TP.HCM', 1, 1),
-(2, 5, N'Văn phòng', '0901111112', N'999 Quang Trung, P.14, Gò Vấp, TP.HCM', 1, 0),
-(3, 6, N'Nhà riêng', '0902222222', N'456 Võ Văn Ngân, P.Linh Chiểu, Thủ Đức, TP.HCM', 1, 1),
-(4, 7, N'Nhà riêng', '0903333333', N'789 Nguyễn Thái Sơn, P.4, Gò Vấp, TP.HCM', 1, 1),
-(5, 8, N'Nhà riêng', '0904444444', N'321 Cách Mạng Tháng 8, P.7, Q.3, TP.HCM', 1, 1);
+INSERT INTO addresses (id, user_id, name, address, active, is_default) VALUES
+(1, 5, N'Nhà riêng', N'123 Lê Văn Việt, P.Hiệp Phú, Q.9, TP.HCM', 1, 1),
+(2, 5, N'Văn phòng', N'999 Quang Trung, P.14, Gò Vấp, TP.HCM', 1, 0),
+(3, 6, N'Nhà riêng', N'456 Võ Văn Ngân, P.Linh Chiểu, Thủ Đức, TP.HCM', 1, 1),
+(4, 7, N'Nhà riêng', N'789 Nguyễn Thái Sơn, P.4, Gò Vấp, TP.HCM', 1, 1),
+(5, 8, N'Nhà riêng', N'321 Cách Mạng Tháng 8, P.7, Q.3, TP.HCM', 1, 1);
 SET IDENTITY_INSERT addresses OFF;
 
 -- 11. ORDERS (Đơn hàng với đủ trạng thái)
 SET IDENTITY_INSERT orders ON;
 INSERT INTO orders (id, customer_id, shop_id, payment_method_id, total_amount, shipping_address, status, order_date) VALUES
--- DELIVERED (Đã giao)
-(1, 1, 2, 1, 735000, N'123 Lê Văn Việt, P.Hiệp Phú, Q.9, TP.HCM', 'DELIVERED', DATEADD(day, -15, GETDATE())),
-(2, 2, 3, 2, 545000, N'456 Võ Văn Ngân, P.Linh Chiểu, Thủ Đức, TP.HCM', 'DELIVERED', DATEADD(day, -12, GETDATE())),
-(3, 3, 4, 1, 860000, N'789 Nguyễn Thái Sơn, P.4, Gò Vấp, TP.HCM', 'DELIVERED', DATEADD(day, -10, GETDATE())),
--- SHIPPING (Đang giao)
-(4, 1, 3, 1, 469000, N'123 Lê Văn Việt, P.Hiệp Phú, Q.9, TP.HCM', 'SHIPPING', DATEADD(day, -3, GETDATE())),
-(5, 4, 2, 3, 2850000, N'321 Cách Mạng Tháng 8, P.7, Q.3, TP.HCM', 'SHIPPING', DATEADD(day, -2, GETDATE())),
+-- CONFIRMED (Đã xác nhận - đơn cũ)
+(1, 1, 2, 1, 735000, N'123 Lê Văn Việt, P.Hiệp Phú, Q.9, TP.HCM', 'CONFIRMED', DATEADD(day, -15, GETDATE())),
+(2, 2, 3, 2, 545000, N'456 Võ Văn Ngân, P.Linh Chiểu, Thủ Đức, TP.HCM', 'CONFIRMED', DATEADD(day, -12, GETDATE())),
+(3, 3, 4, 1, 860000, N'789 Nguyễn Thái Sơn, P.4, Gò Vấp, TP.HCM', 'CONFIRMED', DATEADD(day, -10, GETDATE())),
 -- CONFIRMED (Đã xác nhận)
+(4, 1, 3, 1, 469000, N'123 Lê Văn Việt, P.Hiệp Phú, Q.9, TP.HCM', 'CONFIRMED', DATEADD(day, -3, GETDATE())),
+(5, 4, 2, 3, 2850000, N'321 Cách Mạng Tháng 8, P.7, Q.3, TP.HCM', 'CONFIRMED', DATEADD(day, -2, GETDATE())),
 (6, 2, 4, 1, 500000, N'456 Võ Văn Ngân, P.Linh Chiểu, Thủ Đức, TP.HCM', 'CONFIRMED', DATEADD(day, -1, GETDATE())),
 (7, 3, 2, 2, 770000, N'789 Nguyễn Thái Sơn, P.4, Gò Vấp, TP.HCM', 'CONFIRMED', GETDATE()),
 -- PENDING (Chờ xác nhận)
