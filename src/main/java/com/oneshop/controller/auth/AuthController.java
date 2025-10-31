@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oneshop.dto.AuthDtos.*;
-import com.oneshop.dto.AuthDtos.ForgotPasswordRequest;
-import com.oneshop.dto.AuthDtos.JwtResponse;
-import com.oneshop.dto.AuthDtos.LoginRequest;
-import com.oneshop.dto.AuthDtos.RegisterRequest;
-import com.oneshop.dto.AuthDtos.ResetPasswordRequest;
-import com.oneshop.dto.AuthDtos.VerifyEmailRequest;
+import com.oneshop.dto.auth.AuthDtos.*;
+import com.oneshop.dto.auth.AuthDtos.ForgotPasswordRequest;
+import com.oneshop.dto.auth.AuthDtos.JwtResponse;
+import com.oneshop.dto.auth.AuthDtos.LoginRequest;
+import com.oneshop.dto.auth.AuthDtos.RegisterRequest;
+import com.oneshop.dto.auth.AuthDtos.ResetPasswordRequest;
+import com.oneshop.dto.auth.AuthDtos.VerifyEmailRequest;
 import com.oneshop.security.JwtTokenProvider;
-import com.oneshop.service.AuthService;
+import com.oneshop.service.auth.AuthService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class AuthController {
     return ResponseEntity.ok("Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.");
   }
 
-  @PostMapping("/verify")
+  @PostMapping("/verify-email")
   public ResponseEntity<?> verify(@Valid @RequestBody VerifyEmailRequest req) {
     authService.verifyEmail(req);
     return ResponseEntity.ok("Xác thực email thành công!");

@@ -1,5 +1,12 @@
 package com.oneshop.service.auth;
 
+import java.time.LocalDateTime;
+import java.util.Random;
+import java.util.Set;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.oneshop.dto.auth.AuthDtos.ForgotPasswordRequest;
 import com.oneshop.dto.auth.AuthDtos.JwtResponse;
 import com.oneshop.dto.auth.AuthDtos.LoginRequest;
@@ -13,17 +20,9 @@ import com.oneshop.repository.OtpCodeRepository;
 import com.oneshop.repository.RoleRepository;
 import com.oneshop.repository.UserRepository;
 import com.oneshop.security.JwtTokenProvider;
+import com.oneshop.service.MailService;
 
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.Random;
-import java.util.Set;
-
-import com.oneshop.service.MailService;
 
 @Service @RequiredArgsConstructor
 public class AuthService {
