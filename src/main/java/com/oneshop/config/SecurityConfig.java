@@ -52,7 +52,7 @@ public class SecurityConfig {
                     "/forgot-password", "/reset-password",
                     "/api/auth/**",
                     "/favicon.ico",
-                    "/products", "/products/**"
+                    "/products", "/products/**", "/home/**"
                 ).permitAll()
 
               .requestMatchers("/user/**").hasAnyRole("USER", "VENDOR", "ADMIN")
