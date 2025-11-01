@@ -247,6 +247,56 @@
         font-size: 0.9rem;
         margin-bottom: 15px;
       }
+      
+      /* Review Form Styles */
+      .review-form-container {
+        margin-bottom: 40px;
+      }
+      
+      .rating-stars {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 5px;
+        font-size: 2.5rem;
+      }
+      
+      .rating-stars input[type="radio"] {
+        display: none;
+      }
+      
+      .rating-stars label {
+        color: #ddd;
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+      
+      .rating-stars input[type="radio"]:checked ~ label,
+      .rating-stars label:hover,
+      .rating-stars label:hover ~ label {
+        color: #ffc107;
+      }
+      
+      .rating-stars input[type="radio"]:checked + label:hover,
+      .rating-stars input[type="radio"]:checked + label:hover ~ label,
+      .rating-stars input[type="radio"]:checked ~ label:hover,
+      .rating-stars input[type="radio"]:checked ~ label:hover ~ label,
+      .rating-stars label:hover ~ input[type="radio"]:checked ~ label {
+        color: #ffc107;
+      }
+      
+      #charCount {
+        font-weight: 600;
+        color: #6c757d;
+      }
+      
+      textarea#comment:valid {
+        border-color: #28a745;
+      }
+      
+      textarea#comment:invalid {
+        border-color: #dc3545;
+      }
     </style>
   </head>
   <body>
@@ -362,10 +412,92 @@
       <div class="reviews-section">
         <h4><i class="bi bi-chat-left-text"></i> Đánh giá sản phẩm</h4>
         
+        <!-- Success/Error Messages -->
+        <div th:if="${success != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          <span th:if="${success == 'review_added'}">Đánh giá của bạn đã được gửi thành công!</span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          <span th:if="${error == 'comment_too_short'}">Nội dung đánh giá phải có ít nhất 50 ký tự!</span>
+          <span th:if="${error == 'not_purchased'}">Bạn cần mua sản phẩm này trước khi đánh giá!</span>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <!-- Review Form (Only for users who purchased) -->
+        <div th:if="${hasPurchased}" class="review-form-container mb-4">
+          <div class="card">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Viết đánh giá của bạn</h5>
+            </div>
+            <div class="card-body">
+              <form th:action="@{/user/reviews/add}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="productId" th:value="${product.id}" />
+                
+                <!-- Rating -->
+                <div class="mb-3">
+                  <label class="form-label fw-bold">Đánh giá của bạn <span class="text-danger">*</span></label>
+                  <div class="rating-stars">
+                    <input type="radio" name="rating" value="5" id="star5" required />
+                    <label for="star5" title="5 sao">★</label>
+                    <input type="radio" name="rating" value="4" id="star4" />
+                    <label for="star4" title="4 sao">★</label>
+                    <input type="radio" name="rating" value="3" id="star3" />
+                    <label for="star3" title="3 sao">★</label>
+                    <input type="radio" name="rating" value="2" id="star2" />
+                    <label for="star2" title="2 sao">★</label>
+                    <input type="radio" name="rating" value="1" id="star1" />
+                    <label for="star1" title="1 sao">★</label>
+                  </div>
+                </div>
+                
+                <!-- Comment -->
+                <div class="mb-3">
+                  <label for="comment" class="form-label fw-bold">
+                    Nội dung đánh giá <span class="text-danger">*</span>
+                    <small class="text-muted">(Tối thiểu 50 ký tự)</small>
+                  </label>
+                  <textarea 
+                    class="form-control" 
+                    id="comment" 
+                    name="comment" 
+                    rows="5" 
+                    placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
+                    required
+                    minlength="50"></textarea>
+                  <div class="form-text">
+                    <span id="charCount">0</span>/50 ký tự
+                  </div>
+                </div>
+                
+                <!-- Media Upload (Optional) -->
+                <div class="mb-3">
+                  <label for="media" class="form-label fw-bold">Hình ảnh/Video (Tùy chọn)</label>
+                  <input type="file" class="form-control" id="media" name="media" accept="image/*,video/*" />
+                </div>
+                
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="bi bi-send-fill me-2"></i>Gửi đánh giá
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Info message for users who haven't purchased -->
+        <div th:if="${!hasPurchased}" class="alert alert-info">
+          <i class="bi bi-info-circle-fill me-2"></i>
+          Bạn cần mua sản phẩm này để có thể viết đánh giá.
+        </div>
+        
         <!-- Empty Reviews State -->
         <div th:if="${reviews == null || reviews.isEmpty()}" class="text-center py-5">
           <i class="bi bi-chat-dots" style="font-size: 3rem; color: #dee2e6;"></i>
           <p class="text-muted mt-3">Chưa có đánh giá nào cho sản phẩm này</p>
+          <p class="text-muted" th:if="${hasPurchased}">Hãy là người đầu tiên đánh giá sản phẩm này!</p>
         </div>
         
         <!-- Reviews List -->
@@ -394,6 +526,23 @@
     <script th:inline="javascript">
       const productId = /*[[${product.id}]]*/ 0;
       const maxStock = /*[[${product.stock}]]*/ 0;
+      
+      // Character counter for review comment
+      const commentTextarea = document.getElementById('comment');
+      if (commentTextarea) {
+        const charCountSpan = document.getElementById('charCount');
+        
+        commentTextarea.addEventListener('input', function() {
+          const currentLength = this.value.length;
+          charCountSpan.textContent = currentLength;
+          
+          if (currentLength >= 50) {
+            charCountSpan.style.color = '#28a745';
+          } else {
+            charCountSpan.style.color = '#dc3545';
+          }
+        });
+      }
       
       function decreaseQty() {
         const input = document.getElementById('quantity');

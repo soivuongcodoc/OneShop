@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.oneshop.entity.Order;
 import com.oneshop.entity.OrderStatus;
@@ -25,4 +26,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByCustomer_User_IdOrderByOrderDateDesc(Long userId);
 
     List<Order> findByCustomer_User_IdAndStatusOrderByOrderDateDesc(Long userId, OrderStatus status);
+
+    @Transactional
+    void deleteByShopId(Long shopId);
 }

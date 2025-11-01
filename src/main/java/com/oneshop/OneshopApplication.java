@@ -3,12 +3,10 @@ package com.oneshop;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.oneshop.entity.Role;
 import com.oneshop.repository.RoleRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 
-import java.util.List;
 @SpringBootApplication
 public class OneshopApplication {
 
@@ -18,11 +16,11 @@ public class OneshopApplication {
 	 @Bean
 	    CommandLineRunner seedRoles(RoleRepository roleRepo) {
 	        return args -> {
-	            List<String> roles = List.of("ROLE_USER", "ROLE_VENDOR", "ROLE_ADMIN");
-	            for (String r : roles) {
-	                roleRepo.findByName(r).orElseGet(() -> roleRepo.save(Role.builder().name(r).build()));
-	            }
-	            System.out.println("✅ Seeded roles successfully.");
+	            // Show all roles in database
+	            System.out.println("📋 All roles in database:");
+	            roleRepo.findAll().forEach(role -> 
+	                System.out.println("   - " + role.getName() + " (ID: " + role.getId() + ")")
+	            );
 	        };
 	    }
 }

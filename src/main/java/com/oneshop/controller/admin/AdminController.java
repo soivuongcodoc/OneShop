@@ -7,9 +7,11 @@ import com.oneshop.service.admin.UserService;
 import com.oneshop.entity.User;
 import com.oneshop.dto.admin.UserForm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 
@@ -45,9 +47,18 @@ public class AdminController {
         return "admin/users/user-list";
     }
 
-    @GetMapping("/users/delete/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    @PostMapping("/users/delete/{id}")
+    public String deleteUser(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            userService.deleteUser(id);
+            ra.addFlashAttribute("success", "Đã xóa người dùng.");
+        } catch (DataIntegrityViolationException ex) {
+            // Nếu có ràng buộc khóa ngoại, chuyển sang vô hiệu hóa thay vì xóa cứng
+            userService.deactivateUser(id);
+            ra.addFlashAttribute("warning", "Không thể xóa do ràng buộc dữ liệu. Đã chuyển sang vô hiệu hóa tài khoản.");
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", "Xóa thất bại: " + ex.getMessage());
+        }
         return "redirect:/admin/users";
     }
 

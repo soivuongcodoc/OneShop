@@ -9,6 +9,7 @@ import com.oneshop.entity.User;
 public interface UserService {
     List<User> searchUsers(String keyword);
     void deleteUser(Long id);
+    void deactivateUser(Long id);
 
     // Mới: CRUD cơ bản cho admin UI
     Optional<User> findById(Long id);

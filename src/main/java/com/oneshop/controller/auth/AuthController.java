@@ -1,9 +1,11 @@
-
 package com.oneshop.controller.auth;
 import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +22,8 @@ import com.oneshop.dto.auth.AuthDtos.VerifyEmailRequest;
 import com.oneshop.security.JwtTokenProvider;
 import com.oneshop.service.auth.AuthService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -87,20 +91,39 @@ public class AuthController {
           "roles", roles
       ));
   }
-    // @PostMapping("/logout")
-    // public ResponseEntity<?> logout() {
-    //     // Clear JWT cookie
-    //     ResponseCookie clear = ResponseCookie.from("JWT", "")
-    //             .httpOnly(true)
-    //             .secure(false)
-    //             .path("/")
-    //             .maxAge(0)
-    //             .sameSite("Lax")
-    //             .build();
-    //     return ResponseEntity.ok()
-    //             .header(HttpHeaders.SET_COOKIE, clear.toString())
-    //             .body("Đăng xuất thành công");
-    // }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        // Clear Spring Security context
+        SecurityContextHolder.clearContext();
+        
+        // Invalidate HTTP session
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        
+        // Clear JWT cookie
+        ResponseCookie clearJwt = ResponseCookie.from("jwtToken", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+                
+        ResponseCookie clearOldJwt = ResponseCookie.from("JWT", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, clearJwt.toString())
+                .header(HttpHeaders.SET_COOKIE, clearOldJwt.toString())
+                .body(Map.of("message", "Đăng xuất thành công"));
+    }
     // // Endpoint test đã bỏ
 
 }

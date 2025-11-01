@@ -46,10 +46,32 @@ window.fetch = async (url, options = {}) => {
 };
 
 // tiện ích
-function logout() {
-  localStorage.removeItem("jwtToken");
-  localStorage.removeItem("username");
-  localStorage.removeItem("role");
+async function logout() {
+  try {
+    // Gọi server để xóa HttpOnly cookie JWT (nếu có)
+    await fetch("/api/auth/logout", { 
+      method: "POST",
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem("jwtToken")
+      }
+    });
+  } catch (e) {
+    console.error("Logout API error:", e);
+    // Bỏ qua lỗi network và tiếp tục xóa phía client
+  }
+  
+  // Xóa toàn bộ localStorage
+  localStorage.clear();
+  
+  // Xóa sessionStorage nếu có
+  sessionStorage.clear();
+  
+  // Xóa cookie do client set (nếu còn)
+  document.cookie.split(";").forEach(function(c) { 
+    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+  });
+  
+  // Redirect về trang login
   window.location.href = "/login";
 }
 

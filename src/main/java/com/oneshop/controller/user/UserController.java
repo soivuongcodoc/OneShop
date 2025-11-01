@@ -116,7 +116,7 @@ public class UserController {
         
         // Check if user has VENDOR role
         boolean hasVendorRole = currentUser.getRoles().stream()
-                .anyMatch(role -> "VENDOR".equals(role.getName()));
+                .anyMatch(role -> "ROLE_VENDOR".equals(role.getName()));
         model.addAttribute("hasVendorRole", hasVendorRole);
 
         return "user/dashboard";
@@ -216,7 +216,10 @@ public class UserController {
 
     // 📄 Chi tiết sản phẩm
     @GetMapping("/product/{id}")
-    public String productDetail(@PathVariable("id") Long id, Model model) {
+    public String productDetail(@PathVariable("id") Long id, 
+                                @RequestParam(value = "error", required = false) String error,
+                                @RequestParam(value = "success", required = false) String success,
+                                Model model) {
         var opt = productRepository.findById(id);
         if (opt.isEmpty()) {
             return "redirect:/user/products";
@@ -233,9 +236,19 @@ public class UserController {
 
         // Load reviews
         var reviews = reviewRepository.findByProductIdOrderByCreatedAtDesc(id);
+        
+        // Check if current user has purchased this product
+        var currentUser = userService.getCurrentUser();
+        boolean hasPurchased = false;
+        if (currentUser != null) {
+            hasPurchased = orderDetailRepository.existsPurchasedByUserAndProduct(currentUser.getId(), id);
+        }
 
         model.addAttribute("product", product);
         model.addAttribute("reviews", reviews);
+        model.addAttribute("hasPurchased", hasPurchased);
+        model.addAttribute("error", error);
+        model.addAttribute("success", success);
         return "user/product-detail";
     }
 

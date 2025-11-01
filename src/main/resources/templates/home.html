@@ -229,6 +229,101 @@
         letter-spacing: -1px;
       }
 
+      /* Search Section Styles */
+      .search-container {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        border: 1px solid #f0f0f0;
+      }
+
+      .search-form {
+        margin-bottom: 0;
+      }
+
+      .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 20px;
+        color: #999;
+        font-size: 18px;
+        z-index: 1;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: 16px 20px 16px 50px;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+
+      .search-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      }
+
+      .search-button {
+        padding: 16px 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+      }
+
+      .search-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      .clear-button {
+        padding: 16px 20px;
+        background: #f8f9fa;
+        color: #666;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .clear-button:hover {
+        background: #e9ecef;
+        color: #333;
+      }
+
+      .search-result-info {
+        margin-top: 20px;
+        padding: 16px 20px;
+        background: #e8f4fd;
+        border-left: 4px solid #3498db;
+        border-radius: 8px;
+        color: #2874a6;
+        font-size: 15px;
+      }
+
+      .search-result-info i {
+        color: #3498db;
+      }
+
       .empty-state {
         text-align: center;
         padding: 60px 20px;

@@ -55,10 +55,10 @@ public class AdminShopRequestController {
         User user = request.getUser();
         
         // Change role from USER (1) to VENDOR (2)
-        Role userRole = roleRepository.findByName("USER")
-                .orElseThrow(() -> new RuntimeException("USER role not found"));
-        Role vendorRole = roleRepository.findByName("VENDOR")
-                .orElseThrow(() -> new RuntimeException("VENDOR role not found"));
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("ROLE_USER role not found"));
+        Role vendorRole = roleRepository.findByName("ROLE_VENDOR")
+                .orElseThrow(() -> new RuntimeException("ROLE_VENDOR role not found"));
         
         user.getRoles().clear(); // Remove all roles
         user.getRoles().add(vendorRole); // Add VENDOR role only

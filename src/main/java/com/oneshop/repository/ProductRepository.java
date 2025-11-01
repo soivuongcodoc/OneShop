@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.oneshop.entity.Product;
 
@@ -57,4 +58,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         + "ORDER BY COUNT(w.id) DESC",
             nativeQuery = true)
     List<Product> findTop20MostFavorited();
+
+    @Transactional
+    void deleteByShopId(Long shopId);
 }

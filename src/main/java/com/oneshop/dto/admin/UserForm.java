@@ -13,5 +13,6 @@ public class UserForm {
     private String username;
     private String email;
     private String password; // để trống khi edit nếu không đổi
-    private List<String> roles;
+    private List<String> roles; // For backward compatibility
+    private String role; // Single role selection
 }

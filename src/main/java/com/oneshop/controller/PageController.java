@@ -25,15 +25,31 @@ public class PageController {
     private final ReviewRepository reviewRepository;
 
     /**
-     * Trang chủ cho Guest - Hiển thị 10 sản phẩm bán chạy nhất
+     * Trang chủ cho Guest - Hiển thị 10 sản phẩm bán chạy nhất hoặc kết quả tìm kiếm
      */
     @GetMapping({"/", "/home"})
-    public String homePage(Model model) {
-        // Lấy tất cả sản phẩm có sold > 10, sắp xếp từ lớn đến nhỏ
-        List<Product> allProducts = productRepository.findBySoldGreaterThanOrderBySoldDesc(10);
-        // Chỉ lấy 10 sản phẩm đầu tiên
-        List<Product> top10Products = allProducts.stream().limit(10).toList();
-        model.addAttribute("products", top10Products);
+    public String homePage(@RequestParam(value = "search", required = false) String search, Model model) {
+        List<Product> products;
+        
+        if (search != null && !search.trim().isEmpty()) {
+            // Tìm kiếm sản phẩm theo tên hoặc mô tả
+            Page<Product> searchResults = productRepository
+                .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                    search.trim(), 
+                    search.trim(), 
+                    PageRequest.of(0, 100) // Lấy tối đa 100 kết quả
+                );
+            products = searchResults.getContent();
+            model.addAttribute("searchQuery", search.trim());
+            model.addAttribute("searchResultCount", products.size());
+        } else {
+            // Lấy tất cả sản phẩm có sold > 10, sắp xếp từ lớn đến nhỏ
+            List<Product> allProducts = productRepository.findBySoldGreaterThanOrderBySoldDesc(10);
+            // Chỉ lấy 10 sản phẩm đầu tiên
+            products = allProducts.stream().limit(10).toList();
+        }
+        
+        model.addAttribute("products", products);
         return "home"; // trả về templates/home.html
     }
 

@@ -2,13 +2,14 @@ package com.oneshop.service.impl;
 
 import com.oneshop.entity.Role;
 import com.oneshop.entity.User;
-import com.oneshop.repository.RoleRepository;
-import com.oneshop.repository.UserRepository;
+import com.oneshop.entity.Order;
+import com.oneshop.repository.*;
 import com.oneshop.service.admin.UserService;
 import com.oneshop.dto.admin.UserForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,6 +22,21 @@ public class AdminUserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // For cleanup before hard delete
+    private final CartRepository cartRepository;
+    private final WishlistRepository wishlistRepository;
+    private final ViewedProductRepository viewedProductRepository;
+    private final NotificationRepository notificationRepository;
+    private final AddressRepository addressRepository;
+    private final ReviewRepository reviewRepository;
+    private final ShopRepository shopRepository;
+    private final CustomerRepository customerRepository;
+    private final OrderRepository orderRepository;
+    private final OrderDetailRepository orderDetailRepository;
+    private final ProductRepository productRepository;
+    private final PromotionRepository promotionRepository;
+    private final ShopRequestRepository shopRequestRepository;
+
     @Override
     public List<User> searchUsers(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
@@ -30,8 +46,59 @@ public class AdminUserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
+        if (id == null) return;
+
+        // 1) Remove dependent records that may have FK to users
+        // carts (has FK to users), will cascade to cart_items
+        cartRepository.deleteByUserId(id);
+
+        // wishlists, viewed products, notifications, addresses, reviews
+        wishlistRepository.deleteByUserId(id);
+        viewedProductRepository.deleteByUserId(id);
+        notificationRepository.deleteByUserId(id);
+        addressRepository.deleteByUserId(id);
+        reviewRepository.deleteByUserId(id);
+
+        // 2) Shop and all related data (products, orders, promotions)
+        if (shopRepository.existsById(id)) {
+            // Delete orders & order details for this shop
+            List<Order> shopOrders = orderRepository.findByShopId(id);
+            for (Order order : shopOrders) {
+                orderDetailRepository.deleteAll(orderDetailRepository.findByOrderId(order.getId()));
+            }
+            orderRepository.deleteByShopId(id);
+            
+            // Delete products and promotions
+            productRepository.deleteByShopId(id);
+            promotionRepository.deleteByShopId(id);
+            
+            // Finally delete shop
+            shopRepository.deleteById(id);
+        }
+
+        // 3) ShopRequests (user_id FK to users)
+        userRepository.findById(id).ifPresent(user -> {
+            shopRequestRepository.deleteByUser(user);
+        });
+
+        // 4) Customer: detach link to user to avoid FK block, but keep customer (and orders)
+        customerRepository.findByUserId(id).ifPresent(c -> {
+            c.setUser(null);
+            customerRepository.save(c);
+        });
+
+        // 5) Finally delete the user
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public void deactivateUser(Long id) {
+        userRepository.findById(id).ifPresent(u -> {
+            u.setEnabled(false);
+            userRepository.save(u);
+        });
     }
 
     @Override
@@ -58,22 +125,32 @@ public class AdminUserServiceImpl implements UserService {
         }
         u.setPassword(passwordEncoder.encode(rawPw));
 
-        // assign roles (default ROLE_USER if none provided)
+        // assign roles (single role from form.role, or default ROLE_USER)
+        final String requestedRole = determineRole(form);
+        
+        Role r = roleRepository.findByName(requestedRole)
+                .orElseThrow(() -> new RuntimeException("Role not found: " + requestedRole));
         Set<Role> roles = new HashSet<>();
-        List<String> requested = form.getRoles();
-        if (requested == null || requested.isEmpty()) {
-            Role r = roleRepository.findByName("ROLE_USER")
-                    .orElseThrow(() -> new RuntimeException("ROLE_USER not found"));
-            roles.add(r);
-        } else {
-            for (String rn : requested) {
-                Role r = roleRepository.findByName(rn)
-                        .orElseThrow(() -> new RuntimeException("Role not found: " + rn));
-                roles.add(r);
-            }
-        }
+        roles.add(r);
+        
         u.setRoles(roles);
         userRepository.save(u);
+    }
+    
+    private String determineRole(UserForm form) {
+        String role = form.getRole();
+        
+        // Fallback to roles list if role is not provided (backward compatibility)
+        if ((role == null || role.isBlank()) && form.getRoles() != null && !form.getRoles().isEmpty()) {
+            role = form.getRoles().get(0);
+        }
+        
+        // Default to ROLE_USER if nothing provided
+        if (role == null || role.isBlank()) {
+            role = "ROLE_USER";
+        }
+        
+        return role;
     }
 
     @Override
@@ -99,15 +176,13 @@ public class AdminUserServiceImpl implements UserService {
             u.setPassword(passwordEncoder.encode(form.getPassword()));
         }
 
-        // update roles if provided
-        List<String> requested = form.getRoles();
-        if (requested != null) {
-            Set<Role> roles = requested.stream()
-                    .map(rn -> roleRepository.findByName(rn)
-                            .orElseThrow(() -> new RuntimeException("Role not found: " + rn)))
-                    .collect(Collectors.toSet());
-            u.setRoles(roles);
-        }
+        // update role (single role from form.role)
+        final String requestedRole = determineRole(form);
+        Role r = roleRepository.findByName(requestedRole)
+                .orElseThrow(() -> new RuntimeException("Role not found: " + requestedRole));
+        Set<Role> roles = new HashSet<>();
+        roles.add(r);
+        u.setRoles(roles);
 
         userRepository.save(u);
     }

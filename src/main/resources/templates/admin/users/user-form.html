@@ -28,8 +28,9 @@
       <label class="form-label">Vai trò</label>
       <div th:each="r : ${roles}">
         <label class="form-check">
-          <input class="form-check-input" type="checkbox" th:value="${r}" th:name="roles"
-                 th:checked="${form.roles != null} ? ${form.roles.contains(r)} : false" />
+          <input class="form-check-input" type="radio" th:value="${r}" name="role"
+                 th:checked="${form.roles != null && form.roles.size() > 0} ? ${form.roles[0] == r} : ${r == 'ROLE_USER'}" 
+                 required />
           <span class="form-check-label" th:text="${r}">ROLE_USER</span>
         </label>
       </div>

@@ -76,7 +76,7 @@ public class ShopRequestController {
         shopRequest = shopRequestRepository.save(shopRequest);
         
         // Gửi thông báo cho tất cả admin
-        Role adminRole = roleRepository.findByName("ADMIN").orElse(null);
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN").orElse(null);
         if (adminRole != null) {
             List<User> admins = userRepository.findByRolesContaining(adminRole);
             for (User admin : admins) {
