@@ -174,7 +174,7 @@ public class UserController {
 
     @Autowired
     private com.oneshop.repository.CategoryRepository categoryRepository;
-// ...existing code...
+
     // 📦 Danh sách sản phẩm (guest + user) - hỗ trợ lọc theo danh mục
     @GetMapping("products")
     public String products(
@@ -184,36 +184,31 @@ public class UserController {
             Model model) {
 
         Page<Product> p;
+        var pageable = PageRequest.of(page, 8); // 8 sản phẩm / trang
 
         // Ưu tiên tìm kiếm theo từ khóa
         if (q != null && !q.isBlank()) {
-            p = productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                    q, q, PageRequest.of(page, 8) // changed to 8 per page
-            );
+            p = productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(q, q, pageable);
             model.addAttribute("q", q);
-        } // Sau đó lọc theo category
-        else if (categoryId != null) {
-            p = productRepository.findByCategoryId(categoryId, PageRequest.of(page, 8)); // changed to 8 per page
+        } else if (categoryId != null) { // Sau đó lọc theo category
+            p = productRepository.findByCategoryId(categoryId, pageable);
             model.addAttribute("categoryId", categoryId);
-            // Lấy tên category
-            categoryRepository.findById(categoryId).ifPresent(cat
-                    -> model.addAttribute("selectedCategory", cat)
-            );
-        } // Mặc định hiển thị tất cả
-        else {
-            p = productRepository.findAll(PageRequest.of(page, 8)); // changed to 8 per page
+            categoryRepository.findById(categoryId).ifPresent(cat -> model.addAttribute("selectedCategory", cat));
+        } else { // Mặc định hiển thị tất cả
+            p = productRepository.findAll(pageable);
         }
 
-        // Lấy danh sách categories để hiển thị
         var categories = categoryRepository.findAll();
 
+        // Luôn trả về các tham số để giữ khi chuyển trang
         model.addAttribute("categories", categories);
         model.addAttribute("products", p.getContent());
         model.addAttribute("totalPages", p.getTotalPages());
         model.addAttribute("currentPage", page);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("pageSize", 8);
         return "user/product";
     }
-// ...existing code...
 
     // 📄 Chi tiết sản phẩm
     @GetMapping("/product/{id}")

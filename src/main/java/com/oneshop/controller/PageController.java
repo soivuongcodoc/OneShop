@@ -82,13 +82,4 @@ public class PageController {
     public String resetPasswordPage() {
         return "auth/reset-password"; // file: templates/auth/reset-password.html
     }
-
-    /**
-     * Redirect /products to home page
-     */
-    @GetMapping("/products")
-    public String productsPage() {
-        return "redirect:/";
-    }
-
 }

@@ -1,3 +1,5 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <!DOCTYPE html>
 <html
   xmlns:th="http://www.thymeleaf.org"
@@ -89,14 +91,12 @@
     <div class="sidebar">
       <!-- Search -->
       <div class="search-box">
-        <form action="/products" method="get">
-          <div class="input-group input-group-sm">
-            <input type="text" name="q" class="form-control" placeholder="Tìm sản phẩm..." th:value="${q}">
-            <button class="btn btn-success" type="submit">
-              <i class="bi bi-search"></i>
-            </button>
-          </div>
-        </form>
+  <div class="input-group input-group-sm">
+    <input type="text" name="q" class="form-control" placeholder="Tìm sản phẩm..." th:value="${q}">
+    <button class="btn btn-success" type="submit">
+      <i class="bi bi-search"></i>
+    </button>
+  </div>
       </div>
 
       <!-- Top 20 Section -->
@@ -117,11 +117,11 @@
       <div class="section-title">
         <i class="bi bi-grid-3x3-gap"></i> DANH MỤC
       </div>
-      <a href="/products" class="nav-link" th:classappend="${categoryId == null && q == null} ? 'active'">
+      <a href="/user/products" class="nav-link" th:classappend="${categoryId == null and q == null} ? 'active'">
         <i class="bi bi-grid"></i> Tất cả sản phẩm
       </a>
       <a th:each="cat : ${categories}" 
-         th:href="@{/products(category=${cat.id})}" 
+         th:href="@{/user/products(category=${cat.id})}" 
          class="nav-link"
          th:classappend="${categoryId == cat.id} ? 'active'"
          th:text="${cat.name}">
@@ -171,13 +171,13 @@
       <nav class="d-flex justify-content-center mt-4" th:if="${totalPages > 1}">
         <ul class="pagination">
           <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-            <a class="page-link" th:href="@{/products(page=${currentPage - 1}, q=${q}, category=${categoryId})}">Trước</a>
+            <a class="page-link" th:href="@{/user/products(page=${currentPage - 1}, q=${q}, category=${categoryId})}">Trước</a>
           </li>
           <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}" class="page-item" th:classappend="${i == currentPage} ? 'active'">
-            <a class="page-link" th:href="@{/products(page=${i}, q=${q}, category=${categoryId})}" th:text="${i + 1}">1</a>
+            <a class="page-link" th:href="@{/user/products(page=${i}, q=${q}, category=${categoryId})}" th:text="${i + 1}">1</a>
           </li>
           <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? 'disabled'">
-            <a class="page-link" th:href="@{/products(page=${currentPage + 1}, q=${q}, category=${categoryId})}">Sau</a>
+            <a class="page-link" th:href="@{/user/products(page=${currentPage + 1}, q=${q}, category=${categoryId})}">Sau</a>
           </li>
         </ul>
       </nav>

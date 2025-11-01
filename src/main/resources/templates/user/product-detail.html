@@ -368,7 +368,7 @@
               <label style="font-weight: 600; margin-right: 10px;">Số lượng:</label>
               <button class="quantity-btn" onclick="decreaseQty()">
                 <i class="bi bi-dash"></i>
-              </button>
+              </button> 
               <input type="number" id="quantity" class="quantity-input" value="1" min="1" th:max="${product.stock}">
               <button class="quantity-btn" onclick="increaseQty()">
                 <i class="bi bi-plus"></i>
@@ -388,6 +388,9 @@
               <button class="btn-wishlist" onclick="addToWishlist()">
                 <i class="bi bi-heart"></i>
               </button>
+               <!-- <button style="" class="btn-wishlist" onclick="addToWishlist()">
+                <i class="bi bi-heart"></i>
+              </button> -->
             </div>
           </div>
         </div>
@@ -620,10 +623,7 @@
             alert('Có lỗi xảy ra. Vui lòng thử lại!');
           }
         })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('Có lỗi xảy ra. Vui lòng thử lại!');
-        });
+        ;
       }
     </script>
   </body>
