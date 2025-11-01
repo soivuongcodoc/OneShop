@@ -30,7 +30,7 @@
         <th>Tên người dùng</th>
         <th>Email</th>
         <th>Vai trò</th>
-        <th>Thao tác</th>
+        <!-- <th>Thao tác</th> -->
       </tr>
     </thead>
     <tbody>
@@ -41,17 +41,7 @@
         <td>
           <span th:each="r : ${user.roles}" th:text="${r.name}" class="badge bg-secondary me-1">ROLE_USER</span>
         </td>
-        <td>
-          <a th:href="@{'/admin/users/' + ${user.id} + '/edit'}" class="btn btn-sm btn-outline-primary">
-            <i class="bi bi-eye"></i>
-          </a>
-
-          <form th:action="@{'/admin/users/delete/' + ${user.id}}" method="post" style="display:inline;"
-                onsubmit="return confirm('Bạn chắc chắn muốn xóa người dùng này?')">
-            <!-- <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button> -->
-          </form>
-
-        </td>
+       
       </tr>
     </tbody>
   </table>

@@ -92,10 +92,10 @@ public class AdminController {
         }
         model.addAttribute("form", form);
         model.addAttribute("roles", userService.getAllRoles());
-        model.addAttribute("pageTitle", "Sửa người dùng - Admin");
+        model.addAttribute("pageTitle", "Xem chi tiết người dùng - Admin");
         model.addAttribute("mode", "edit");
         model.addAttribute("userId", id);
-        return "admin/users/user-form";
+        return "admin/users/user-form-view";
     }
 
     @PostMapping("/users/{id}")
