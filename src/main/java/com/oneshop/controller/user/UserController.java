@@ -174,7 +174,7 @@ public class UserController {
 
     @Autowired
     private com.oneshop.repository.CategoryRepository categoryRepository;
-
+// ...existing code...
     // 📦 Danh sách sản phẩm (guest + user) - hỗ trợ lọc theo danh mục
     @GetMapping("products")
     public String products(
@@ -188,20 +188,20 @@ public class UserController {
         // Ưu tiên tìm kiếm theo từ khóa
         if (q != null && !q.isBlank()) {
             p = productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                    q, q, PageRequest.of(page, 20)
+                    q, q, PageRequest.of(page, 8) // changed to 8 per page
             );
             model.addAttribute("q", q);
         } // Sau đó lọc theo category
         else if (categoryId != null) {
-            p = productRepository.findByCategoryId(categoryId, PageRequest.of(page, 20));
+            p = productRepository.findByCategoryId(categoryId, PageRequest.of(page, 8)); // changed to 8 per page
             model.addAttribute("categoryId", categoryId);
             // Lấy tên category
             categoryRepository.findById(categoryId).ifPresent(cat
                     -> model.addAttribute("selectedCategory", cat)
             );
-        } // Mặc định hiển thị tất cả (tăng số lượng)
+        } // Mặc định hiển thị tất cả
         else {
-            p = productRepository.findAll(PageRequest.of(page, 50));
+            p = productRepository.findAll(PageRequest.of(page, 8)); // changed to 8 per page
         }
 
         // Lấy danh sách categories để hiển thị
@@ -213,6 +213,7 @@ public class UserController {
         model.addAttribute("currentPage", page);
         return "user/product";
     }
+// ...existing code...
 
     // 📄 Chi tiết sản phẩm
     @GetMapping("/product/{id}")

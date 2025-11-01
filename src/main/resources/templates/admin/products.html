@@ -1,27 +1,4 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
-  <title th:text="${pageTitle}">Quản lý Sản phẩm - OneShop Admin</title>
-</head>
-<body>
-
-<div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
-  <h4 class="fw-bold text-primary">
-    <i class="bi bi-box-seam"></i> Danh sách sản phẩm
-  </h4>
-  <a th:href="@{/admin/products/new}" class="btn btn-success">
-    <i class="bi bi-plus-circle"></i> Thêm sản phẩm
-  </a>
-</div>
-
-<form th:action="@{/admin/products}" method="get" class="mb-3">
-  <div class="input-group" style="max-width:400px;">
-    <input type="text" name="keyword" th:value="${keyword}" class="form-control" placeholder="Tìm theo tên sản phẩm...">
-    <button class="btn btn-primary"><i class="bi bi-search"></i></button>
-  </div>
-</form>
-
+<!-- ...existing code... -->
 <div class="table-responsive">
   <table class="table table-hover align-middle">
     <thead class="table-primary text-center">
@@ -78,5 +55,37 @@
   </table>
 </div>
 
+<!-- Pagination -->
+<div th:if="${totalPages != null and totalPages > 1}" class="d-flex justify-content-between align-items-center">
+  <div>
+    <p class="mb-0">Trang <span th:text="${currentPage + 1}">1</span> / <span th:text="${totalPages}">1</span></p>
+  </div>
+
+  <nav aria-label="Product pagination">
+    <ul class="pagination mb-0">
+      <li th:classappend="${currentPage == 0} ? 'disabled' : ''" class="page-item">
+        <a class="page-link"
+           th:href="@{/admin/products(page=${currentPage - 1}, keyword=${keyword})}"
+           th:attr="aria-disabled=${currentPage == 0}">Previous</a>
+      </li>
+
+      <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+          th:classappend="${i == currentPage} ? 'active' : ''"
+          class="page-item">
+        <a class="page-link"
+           th:href="@{/admin/products(page=${i}, keyword=${keyword})}"
+           th:text="${i + 1}">1</a>
+      </li>
+
+      <li th:classappend="${currentPage + 1 >= totalPages} ? 'disabled' : ''" class="page-item">
+        <a class="page-link"
+           th:href="@{/admin/products(page=${currentPage + 1}, keyword=${keyword})}"
+           th:attr="aria-disabled=${currentPage + 1 >= totalPages}">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
 </body>
 </html>
+<!-- ...existing code... -->

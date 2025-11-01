@@ -43,12 +43,12 @@
         </td>
         <td>
           <a th:href="@{'/admin/users/' + ${user.id} + '/edit'}" class="btn btn-sm btn-outline-primary">
-            <i class="bi bi-pencil"></i>
+            <i class="bi bi-eye"></i>
           </a>
 
           <form th:action="@{'/admin/users/delete/' + ${user.id}}" method="post" style="display:inline;"
                 onsubmit="return confirm('Bạn chắc chắn muốn xóa người dùng này?')">
-            <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button>
+            <!-- <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button> -->
           </form>
 
         </td>
