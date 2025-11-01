@@ -188,7 +188,7 @@ public class UserController {
 
         // Ưu tiên tìm kiếm theo từ khóa
         if (q != null && !q.isBlank()) {
-            p = productRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(q, q, pageable);
+            p = productRepository.findByNameContainingIgnoreCase(q, pageable);
             model.addAttribute("q", q);
         } else if (categoryId != null) { // Sau đó lọc theo category
             p = productRepository.findByCategoryId(categoryId, pageable);

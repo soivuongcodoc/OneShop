@@ -34,8 +34,7 @@ public class PageController {
         if (search != null && !search.trim().isEmpty()) {
             // Tìm kiếm sản phẩm theo tên hoặc mô tả
             Page<Product> searchResults = productRepository
-                .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                    search.trim(), 
+                .findByNameContainingIgnoreCase( 
                     search.trim(), 
                     PageRequest.of(0, 100) // Lấy tối đa 100 kết quả
                 );
@@ -82,4 +81,39 @@ public class PageController {
     public String resetPasswordPage() {
         return "auth/reset-password"; // file: templates/auth/reset-password.html
     }
+
+    @GetMapping("/products")
+     public String products(
+            @RequestParam(value = "q", required = false) String q,
+            @RequestParam(value = "category", required = false) Long categoryId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            Model model) {
+
+        Page<Product> p;
+        var pageable = PageRequest.of(page, 8); // 8 sản phẩm / trang
+
+        // Ưu tiên tìm kiếm theo từ khóa
+        if (q != null && !q.isBlank()) {
+            p = productRepository.findByNameContainingIgnoreCase(q, pageable);
+            model.addAttribute("q", q);
+        } else if (categoryId != null) { // Sau đó lọc theo category
+            p = productRepository.findByCategoryId(categoryId, pageable);
+            model.addAttribute("categoryId", categoryId);
+            categoryRepository.findById(categoryId).ifPresent(cat -> model.addAttribute("selectedCategory", cat));
+        } else { // Mặc định hiển thị tất cả
+            p = productRepository.findAll(pageable);
+        }
+
+        var categories = categoryRepository.findAll();
+
+        // Luôn trả về các tham số để giữ khi chuyển trang
+        model.addAttribute("categories", categories);
+        model.addAttribute("products", p.getContent());
+        model.addAttribute("totalPages", p.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("pageSize", 8);
+        return "user/product";
+    }
+    
 }
